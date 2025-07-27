@@ -10,7 +10,7 @@
 ## 1. Cấu trúc thư mục
 
 ```
-practice-software-testing/
+api-automation-practice/
 ├── .github/
 │   └── workflows/
 │       └── api-test.yml         # File workflow GitHub Actions
