@@ -37,7 +37,7 @@ practice-software-testing/
 
 ```bash
 # Khởi động các container Docker
-docker compose up -d
+docker-compose up -d
 
 # Chờ khoảng 60 giây để các service khởi động hoàn tất
 
