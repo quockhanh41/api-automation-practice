@@ -33,8 +33,6 @@ practice-software-testing/
 
 ### Bước 1: Data-driven testing với Postman
 
-### Bước 1: Data-driven testing với Postman
-
 **Lưu ý quan trọng:** Trước khi bắt đầu, bạn cần khởi động ứng dụng và tạo dữ liệu:
 
 ```bash
