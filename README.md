@@ -66,6 +66,8 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 
 ### Bước 2: Chạy Newman local
 
+**Lưu ý**: trước khi chạy nhớ đóng docker (docker compose down)
+
 1. Mở file `run-api-tests.sh` và tìm dòng có chú thích:
     ```
     # TODO (Bạn thêm code ở dưới đây)
