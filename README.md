@@ -10,7 +10,7 @@
 ## 1. Cấu trúc thư mục
 
 ```
-practice-software-testing/
+api-automation-practice/
 ├── .github/
 │   └── workflows/
 │       └── api-test.yml         # File workflow GitHub Actions
@@ -37,7 +37,7 @@ practice-software-testing/
 
 ```bash
 # Khởi động các container Docker
-docker compose up -d
+docker-compose up -d
 
 # Chờ khoảng 60 giây để các service khởi động hoàn tất
 
@@ -64,7 +64,9 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 
 ---
 
-### Yêu cầu 2: Chạy Newman local
+### Bước 2: Chạy Newman local
+
+**Lưu ý**: trước khi chạy nhớ đóng docker (docker compose down)
 
 1. Mở file `run-api-tests.sh` (hoặc `run-api-tests.ps1` - nếu bạn sử dụng PowerShell của hệ điều hành windowns) và tìm dòng có chú thích:
     ```
@@ -151,4 +153,4 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 
 ---
 
-**Chúc các bạn hoàn thành tốt bài tập!**# api-automation-practice
+**Chúc các bạn hoàn thành tốt bài tập!**
