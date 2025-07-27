@@ -23,6 +23,7 @@ api-automation-practice/
 │       ├── environment.json     # Environment Postman
 │       └── user-accounts.csv    # File dữ liệu kiểm thử data-driven
 ├── run-api-tests.sh             # Script chạy newman local
+├── run-api-tests.ps1            # Script chạy newman local (powershell)
 └── README.md                    # File hướng dẫn này
 ```
 
