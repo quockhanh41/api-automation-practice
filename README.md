@@ -33,6 +33,22 @@ practice-software-testing/
 
 ### Bước 1: Data-driven testing với Postman
 
+### Bước 1: Data-driven testing với Postman
+
+**Lưu ý quan trọng:** Trước khi bắt đầu, bạn cần khởi động ứng dụng và tạo dữ liệu:
+
+```bash
+# Khởi động các container Docker
+docker compose up -d
+
+# Chờ khoảng 60 giây để các service khởi động hoàn tất
+
+# Tạo database và dữ liệu mẫu
+docker compose exec laravel-api php artisan migrate:fresh --seed --force
+
+# Kiểm tra ứng dụng: http://localhost:8091 (API), http://localhost:8092 (UI)
+```
+
 1. Import collection và environment có sẵn từ `tests/api` vào Postman.
 2. Tạo file `user-accounts.csv` trong `tests/api` chứa các trường: `email`, `password`, `expected_status`.
 
