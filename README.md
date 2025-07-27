@@ -31,7 +31,7 @@ practice-software-testing/
 
 ## 2. Đề bài & Yêu cầu
 
-### Bước 1: Data-driven testing với Postman
+### Yêu cầu 1: Data-driven testing với Postman
 
 **Lưu ý quan trọng:** Trước khi bắt đầu, bạn cần khởi động ứng dụng và tạo dữ liệu:
 
@@ -64,9 +64,9 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 
 ---
 
-### Bước 2: Chạy Newman local
+### Yêu cầu 2: Chạy Newman local
 
-1. Mở file `run-api-tests.sh` và tìm dòng có chú thích:
+1. Mở file `run-api-tests.sh` (hoặc `run-api-tests.ps1` - nếu bạn sử dụng PowerShell của hệ điều hành windowns) và tìm dòng có chú thích:
     ```
     # TODO (Bạn thêm code ở dưới đây)
     ```
@@ -86,9 +86,29 @@ docker compose exec laravel-api php artisan migrate:fresh --seed --force
 
     Sau khi chạy xong, kiểm tra kết quả kiểm thử và báo cáo được sinh ra trong thư mục hiện tại (hoặc theo đường dẫn được script chỉ định).
 
+    ---
+
+    ✅ **Cách chạy PowerShell script trên Windows:**
+
+    1. Lưu file script với tên `run-api-tests.ps1`.
+    2. Mở PowerShell với quyền admin (nếu cần).
+    3. Nếu bị chặn khi chạy script, cho phép thực thi bằng lệnh:
+
+        ```powershell
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+        ```
+
+    4. Chạy script:
+
+        ```powershell
+        .\run-api-tests.ps1
+        ```
+
+    Sau khi chạy xong, kiểm tra kết quả kiểm thử và báo cáo được sinh ra trong thư mục hiện tại (hoặc theo đường dẫn được script chỉ định).
+
 ---
 
-### Bước 3: Tích hợp GitHub Actions
+### Yêu cầu 3: Tích hợp GitHub Actions
 
 1. **Tạo repository mới trên GitHub** và push toàn bộ code của bạn lên repository này.
 
