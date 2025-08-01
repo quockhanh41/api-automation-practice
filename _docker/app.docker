@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-alpine
 
-RUN apk add --no-cache mysql-client msmtp perl wget procps shadow libzip libpng libjpeg-turbo libwebp freetype icu
+RUN apk add --no-cache mysql-client msmtp perl wget procps shadow libzip libpng libjpeg-turbo libwebp freetype icu su-exec
 
 RUN apk add --no-cache --virtual build-essentials \
     icu-dev icu-libs zlib-dev g++ make automake autoconf libffi-dev libzip-dev \
@@ -20,8 +20,11 @@ RUN apk add --no-cache --virtual build-essentials \
 COPY opcache.ini $PHP_INI_DIR/conf.d/
 COPY php-ini-overrides.ini $PHP_INI_DIR/conf.d/
 
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 RUN usermod -u 1000 www-data
 
-RUN chown -R www-data:www-data /var/www
-
-USER www-data
+# Set entrypoint (runs as root, then switches to www-data)
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

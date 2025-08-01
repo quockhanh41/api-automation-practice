@@ -63,17 +63,78 @@ jobs:
     - run: npm install -g newman newman-reporter-htmlextra
 
     # Bước 7: Chạy kiểm thử Newman
-    # TODO (Bạn thêm code ở dưới đây)
     - name: Run Newman Tests 🚀
       run: |
+        echo "📁 Creating reports directory..."
+        mkdir -p reports
+        
+        echo "🔍 Testing API status endpoint..."
+        curl -f http://localhost:8091/status -H "Accept: application/json" || exit 1
+        echo "✅ Status endpoint working"
+        
+        echo "🔍 Testing products endpoint..."
+        curl -f http://localhost:8091/products -H "Accept: application/json" || exit 1
+        echo "✅ Products endpoint working"
+        
+        echo "🚀 Running Newman test suites..."
+        
+        # Test suite 1: Login tests
+        if [ -f "tests/api/login-tests.postman_collection.json" ] && [ -f "tests/api/user-accounts.csv" ]; then
+          echo "📋 Running login tests with CSV data..."
+          newman run tests/api/login-tests.postman_collection.json \
+            --iteration-data tests/api/user-accounts.csv \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export reports/login-dynamic-tests.html
+        else
+          echo "⚠️ Login test files not found, skipping..."
+        fi
+        
+        # Test suite 2: Get invoices tests  
+        if [ -f "tests/api/get-invoices-tests.postman_collection.json" ] && [ -f "tests/api/get-invoices-accounts.csv" ]; then
+          echo "📋 Running get invoices tests with CSV data..."
+          newman run tests/api/get-invoices-tests.postman_collection.json \
+            --iteration-data tests/api/get-invoices-accounts.csv \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export reports/get-invoices-dynamic-tests.html
+        else
+          echo "⚠️ Get invoices test files not found, skipping..."
+        fi
+        
+        # Test suite 3: Create product tests
+        if [ -f "tests/api/create-product-tests.postman_collection.json" ] && [ -f "tests/api/create-product-accounts.csv" ]; then
+          echo "📋 Running create product tests with CSV data..."
+          newman run tests/api/create-product-tests.postman_collection.json \
+            --iteration-data tests/api/create-product-accounts.csv \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export reports/create-product-dynamic-tests.html
+        else
+          echo "⚠️ Create product test files not found, skipping..."
+        fi
+        
+        # Chạy thêm full test collections (nếu có)
+        echo "📋 Running additional full test collections..."
+        for collection in tests/api/*-full-tests.postman_collection.json; do
+          if [ -f "$collection" ]; then
+            filename=$(basename "$collection" .postman_collection.json)
+            echo "🔄 Running $filename..."
+            newman run "$collection" \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export "reports/$filename.html"
+          fi
+        done
+        
+        echo "✅ All Newman tests completed!"
+        echo "📊 Generated reports:"
+        ls -la reports/ || echo "No reports generated"
         
     # Bước 8: Upload báo cáo (luôn chạy)
-    - name: Upload Test Report 📊
+    - name: Upload Test Reports 📊
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        # name: newman-report (đổi tên lại cho phù hợp)
-        # path: test-report.html (đổi tên lại cho phù hợp)
+        name: newman-test-reports
+        path: reports/
+        retention-days: 30
 
     # Bước 9: Dọn dẹp (luôn chạy)
     - name: Cleanup 🧹

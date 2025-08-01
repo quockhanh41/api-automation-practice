@@ -1,0 +1,12 @@
+# Copy nội dung này vào file .env.act để test local với act
+# Environment variables for local testing with act
+
+# Laravel secrets (for testing only - use fake values)
+APP_KEY=base64:YourTestAppKeyHere123456789012345678901234567890
+DB_DATABASE=test_database
+DB_USERNAME=test_user  
+DB_PASSWORD=test_password
+JWT_SECRET=your_test_jwt_secret_key_here_make_it_long_enough
+
+# GitHub token (optional, for API rate limits)
+# GITHUB_TOKEN=your_github_personal_access_token

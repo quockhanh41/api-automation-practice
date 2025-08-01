@@ -65,7 +65,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@practicesoftwaretesting.com\",\n  \"password\": \"welcome01\"\n}"
+					"raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/users/login",
@@ -131,7 +131,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@practicesoftwaretesting.com\",\n  \"password\": \"wrongpassword\"\n}"
+					"raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/users/login",
