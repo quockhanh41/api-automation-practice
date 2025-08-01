@@ -1,4 +1,4 @@
-version: '2'
+# Docker Compose file - version removed to avoid warnings
 services:
   # The Application
   laravel-api:

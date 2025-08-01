@@ -7,6 +7,25 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Which test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - login-only
+          - invoices-only
+          - products-only
+      environment:
+        description: 'Target environment'
+        required: false
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - staging
 
 jobs:
   test:
@@ -17,7 +36,7 @@ jobs:
     - name: Checkout Code ⚙️
       uses: actions/checkout@v4
 
-    # Bước 2: Tạo file .env từ template và secrets
+    # Bước 2: Tạo file .env cho Laravel
     - name: Create Laravel .env file 🔧
       env:
         APP_KEY: ${{ secrets.APP_KEY }}
@@ -26,13 +45,47 @@ jobs:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: |
-        echo "🔧 Creating Laravel .env file from .env.ci template..."
-        # Lệnh envsubst sẽ đọc file .env.ci, tìm các biến $VAR và thay bằng giá trị từ secrets
-        envsubst < sprint5-with-bugs/API/.env.ci > sprint5-with-bugs/API/.env
+        echo "🔧 Creating Laravel .env file for CI/CD..."
+        # Remove any existing .env file
+        rm -f sprint5-with-bugs/API/.env
+        # Create .env file with proper database configuration
+        echo "APP_NAME=Toolshop" >> sprint5-with-bugs/API/.env
+        echo "APP_ENV=testing" >> sprint5-with-bugs/API/.env
+        echo "APP_KEY=${APP_KEY:-base64:YourTestAppKeyHere123456789012345678901234567890}" >> sprint5-with-bugs/API/.env
+        echo "APP_DEBUG=true" >> sprint5-with-bugs/API/.env
+        echo "APP_URL=http://localhost:8091" >> sprint5-with-bugs/API/.env
+        echo "APP_TIMEZONE=UTC" >> sprint5-with-bugs/API/.env
+        echo "" >> sprint5-with-bugs/API/.env
+        echo "LOG_CHANNEL=single" >> sprint5-with-bugs/API/.env
+        echo "LOG_LEVEL=debug" >> sprint5-with-bugs/API/.env
+        echo "" >> sprint5-with-bugs/API/.env
+        echo "DB_CONNECTION=mysql" >> sprint5-with-bugs/API/.env
+        echo "DB_HOST=mariadb" >> sprint5-with-bugs/API/.env
+        echo "DB_PORT=3306" >> sprint5-with-bugs/API/.env
+        echo "DB_DATABASE=${DB_DATABASE:-toolshop}" >> sprint5-with-bugs/API/.env
+        echo "DB_USERNAME=${DB_USERNAME:-user}" >> sprint5-with-bugs/API/.env
+        echo "DB_PASSWORD=${DB_PASSWORD:-root}" >> sprint5-with-bugs/API/.env
+        echo "" >> sprint5-with-bugs/API/.env
+        echo "CACHE_DRIVER=array" >> sprint5-with-bugs/API/.env
+        echo "QUEUE_CONNECTION=sync" >> sprint5-with-bugs/API/.env
+        echo "SESSION_DRIVER=array" >> sprint5-with-bugs/API/.env
+        echo "" >> sprint5-with-bugs/API/.env
+        echo "JWT_SECRET=${JWT_SECRET:-your_test_jwt_secret_key_here_make_it_long_enough}" >> sprint5-with-bugs/API/.env
+        echo "" >> sprint5-with-bugs/API/.env
+        echo "MAIL_DRIVER=log" >> sprint5-with-bugs/API/.env
+        echo "BROADCAST_DRIVER=log" >> sprint5-with-bugs/API/.env
+        echo "CACHE_STORE=array" >> sprint5-with-bugs/API/.env
+        echo "FILESYSTEM_DRIVER=local" >> sprint5-with-bugs/API/.env
+        echo "SESSION_LIFETIME=120" >> sprint5-with-bugs/API/.env
         echo "✅ .env file created successfully."
+        echo "📄 .env file contents:"
+        cat sprint5-with-bugs/API/.env
 
     # Bước 3: Khởi động các container Docker
     - name: Start Docker Containers 🐳
+      env:
+        SPRINT_FOLDER: sprint5-with-bugs
+        DISABLE_LOGGING: false
       run: docker compose up -d
 
     # Bước 4: Chờ các dịch vụ sẵn sàng
@@ -42,6 +95,9 @@ jobs:
 
     # Bước 5: Cài đặt các thư viện và thiết lập ứng dụng
     - name: Setup Application 🔧
+      env:
+        SPRINT_FOLDER: sprint5-with-bugs
+        DISABLE_LOGGING: false
       run: |
         echo "📦 Installing Composer dependencies..."
         # Sử dụng service 'composer' đã định nghĩa trong docker-compose.yml
@@ -77,38 +133,52 @@ jobs:
         echo "✅ Products endpoint working"
         
         echo "🚀 Running Newman test suites..."
+        echo "📝 Selected test suite: ${{ github.event.inputs.test_suite || 'all' }}"
+        echo "🌍 Target environment: ${{ github.event.inputs.environment || 'test' }}"
         
         # Test suite 1: Login tests
-        if [ -f "tests/api/login-tests.postman_collection.json" ] && [ -f "tests/api/user-accounts.csv" ]; then
-          echo "📋 Running login tests with CSV data..."
-          newman run tests/api/login-tests.postman_collection.json \
-            --iteration-data tests/api/user-accounts.csv \
-            --reporters cli,htmlextra \
-            --reporter-htmlextra-export reports/login-dynamic-tests.html
+        if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "login-only" ]]; then
+          if [ -f "tests/api/login-tests.postman_collection.json" ] && [ -f "tests/api/user-accounts.csv" ]; then
+            echo "📋 Running login tests with CSV data..."
+            newman run tests/api/login-tests.postman_collection.json \
+              --iteration-data tests/api/user-accounts.csv \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export reports/login-dynamic-tests.html
+          else
+            echo "⚠️ Login test files not found, skipping..."
+          fi
         else
-          echo "⚠️ Login test files not found, skipping..."
+          echo "⏭️ Skipping login tests (not selected)"
         fi
         
         # Test suite 2: Get invoices tests  
-        if [ -f "tests/api/get-invoices-tests.postman_collection.json" ] && [ -f "tests/api/get-invoices-accounts.csv" ]; then
-          echo "📋 Running get invoices tests with CSV data..."
-          newman run tests/api/get-invoices-tests.postman_collection.json \
-            --iteration-data tests/api/get-invoices-accounts.csv \
-            --reporters cli,htmlextra \
-            --reporter-htmlextra-export reports/get-invoices-dynamic-tests.html
+        if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "invoices-only" ]]; then
+          if [ -f "tests/api/get-invoices-tests.postman_collection.json" ] && [ -f "tests/api/get-invoices-accounts.csv" ]; then
+            echo "📋 Running get invoices tests with CSV data..."
+            newman run tests/api/get-invoices-tests.postman_collection.json \
+              --iteration-data tests/api/get-invoices-accounts.csv \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export reports/get-invoices-dynamic-tests.html
+          else
+            echo "⚠️ Get invoices test files not found, skipping..."
+          fi
         else
-          echo "⚠️ Get invoices test files not found, skipping..."
+          echo "⏭️ Skipping get invoices tests (not selected)"
         fi
         
         # Test suite 3: Create product tests
-        if [ -f "tests/api/create-product-tests.postman_collection.json" ] && [ -f "tests/api/create-product-accounts.csv" ]; then
-          echo "📋 Running create product tests with CSV data..."
-          newman run tests/api/create-product-tests.postman_collection.json \
-            --iteration-data tests/api/create-product-accounts.csv \
-            --reporters cli,htmlextra \
-            --reporter-htmlextra-export reports/create-product-dynamic-tests.html
+        if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "products-only" ]]; then
+          if [ -f "tests/api/create-product-tests.postman_collection.json" ] && [ -f "tests/api/create-product-accounts.csv" ]; then
+            echo "📋 Running create product tests with CSV data..."
+            newman run tests/api/create-product-tests.postman_collection.json \
+              --iteration-data tests/api/create-product-accounts.csv \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export reports/create-product-dynamic-tests.html
+          else
+            echo "⚠️ Create product test files not found, skipping..."
+          fi
         else
-          echo "⚠️ Create product test files not found, skipping..."
+          echo "⏭️ Skipping create product tests (not selected)"
         fi
         
         # Chạy thêm full test collections (nếu có)
@@ -139,4 +209,7 @@ jobs:
     # Bước 9: Dọn dẹp (luôn chạy)
     - name: Cleanup 🧹
       if: always()
+      env:
+        SPRINT_FOLDER: sprint5-with-bugs
+        DISABLE_LOGGING: false
       run: docker compose down -v
