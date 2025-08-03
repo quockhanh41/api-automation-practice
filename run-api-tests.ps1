@@ -97,25 +97,25 @@ Write-Host ""
 
 $testSuites = @(
     @{
-        Collection = "tests/api/login-tests.postman_collection.json"
+        Collection = "tests/collection/login-tests.postman_collection.json"
         Data = "tests/data/user-accounts.csv"
         Name = "login-tests"
         Description = "Authentication and login functionality tests"
     },
     @{
-        Collection = "tests/api/get-invoices-tests.postman_collection.json"
+        Collection = "tests/collection/get-invoices-tests.postman_collection.json"
         Data = "tests/data/get-invoices-accounts.csv"
         Name = "get-invoices-tests"
         Description = "Invoice retrieval and data validation tests"
     },
     @{
-        Collection = "tests/api/create-product-tests.postman_collection.json"
+        Collection = "tests/collection/create-product-tests.postman_collection.json"
         Data = "tests/data/create-product-accounts.csv"
         Name = "create-product-tests"
         Description = "Product creation and validation tests"
     },
     @{
-        Collection = "tests/api/User-Profile-API-Testing.postman_collection.json"
+        Collection = "tests/collection/User-Profile-API-Testing.postman_collection.json"
         Data = "tests/data/user-profile-api-test-data.csv"
         Name = "user-profile-api-tests"
         Description = "User profile API testing - Data-driven tests with CSV data for all scenarios"
@@ -127,7 +127,7 @@ foreach ($testSuite in $testSuites) {
     $dataFile = $testSuite.Data
     $testName = $testSuite.Name
     $description = $testSuite.Description
-    $environmentFile = "tests/environments/local.postman_environment.json"
+    $environmentFile = "tests/collection/environment.json"
     
     Write-Host "[SUITE] Starting: $testName" -ForegroundColor Magenta
     Write-Host "[DESC] $description" -ForegroundColor Gray
@@ -178,10 +178,10 @@ Write-Host "[REPORTS] Check the following HTML reports:" -ForegroundColor Cyan
 Write-Host "  • reports/login-tests.html" -ForegroundColor White
 Write-Host "  • reports/get-invoices-tests.html" -ForegroundColor White
 Write-Host "  • reports/create-product-tests.html" -ForegroundColor White
-Write-Host "  • reports/user-profile-update-tests.html" -ForegroundColor White
+Write-Host "  • reports/user-profile-api-tests.html" -ForegroundColor White
 Write-Host ""
 Write-Host "[INFO] Test Summary:" -ForegroundColor Yellow
 Write-Host "  ✓ Login Tests: Authentication validation" -ForegroundColor Green
 Write-Host "  ✓ Get Invoices Tests: Data retrieval validation" -ForegroundColor Green
 Write-Host "  ✓ Create Product Tests: Data creation validation" -ForegroundColor Green
-Write-Host "  ✓ User Profile Update Tests: Profile management validation" -ForegroundColor Green
+Write-Host "  ✓ User Profile API Tests: Profile management validation" -ForegroundColor Green
