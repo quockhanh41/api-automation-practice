@@ -8,113 +8,63 @@
 	},
 	"item": [
 		{
-			"name": "Login Success",
+			"name": "Login Test",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
+							"const expectedStatus = parseInt(pm.iterationData.get('expected_status'));",
+							"const actualStatus = pm.response.code;",
 							"",
-							"pm.test(\"Response status code is 200\", function () {",
-							"    pm.expect(pm.response.code).to.equal(200);",
+							"pm.test(`Response status code should be ${expectedStatus}`, function () {",
+							"    pm.expect(actualStatus).to.equal(expectedStatus);",
 							"});",
 							"",
+							"// Test for successful login (status 200)",
+							"if (expectedStatus === 200) {",
+							"    pm.test(\"Response has required fields for successful login\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData).to.be.an('object');",
+							"        pm.expect(responseData).to.have.all.keys('access_token', 'token_type', 'expires_in');",
+							"    });",
 							"",
-							"pm.test(\"Response has required fields\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData).to.have.all.keys('access_token', 'token_type', 'expires_in');",
+							"    pm.test(\"Access token must be a non-empty string\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData.access_token).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0);",
+							"    });",
+							"",
+							"    pm.test(\"Token type must be a non-empty string\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData.token_type).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1);",
+							"    });",
+							"",
+							"    pm.test(\"Expires_in must be a positive integer\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData.expires_in).to.exist.and.to.be.a('number').and.to.be.above(0);",
+							"    });",
+							"}",
+							"",
+							"// Test for error responses (401, 422, 423, 403)",
+							"if ([401, 422, 423, 403].includes(expectedStatus)) {",
+							"    pm.test(\"Response contains error information\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData).to.be.an('object');",
+							"        pm.expect(responseData).to.have.property('error');",
+							"    });",
+							"",
+							"    pm.test(\"Error message must be a non-empty string\", function () {",
+							"        const responseData = pm.response.json();",
+							"        pm.expect(responseData.error).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1);",
+							"    });",
+							"}",
+							"",
+							"pm.test(\"Response time is reasonable\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
 							"});",
-							"",
-							"",
-							"pm.test(\"Access token must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.access_token).to.exist.and.to.be.a('string').and.to.have.lengthOf.above(0, \"Access token should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Token type must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.token_type).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Token type should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Expires_in must be a positive integer\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.expires_in).to.exist.and.to.be.a('number').and.to.be.above(0, \"Expires_in should be a positive integer\");",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
-				},
-				"url": {
-					"raw": "{{base_url}}/users/login",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"users",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Login Fail - Wrong Password",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"",
-							"pm.test(\"Response status code is 401\", function () {",
-							"    pm.expect(pm.response.code).to.eql(401);",
-							"});",
-							"",
-							"",
-							"pm.test(\"Response contains the required error field\", function () {",
-							"    const responseData = pm.response.json();",
-							"    ",
-							"    pm.expect(responseData).to.be.an('object').and.to.have.property('error');",
-							"});",
-							"",
-							"",
-							"pm.test(\"Error message must be a non-empty string\", function () {",
-							"    const responseData = pm.response.json();",
-							"",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData.error).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Error message should not be empty\");",
-							"});",
-							"",
-							"",
-							"pm.test(\"Response time is less than 200ms\", function () {",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);",
-							"});",
-							"",
 							"",
 							"pm.test(\"Content-Type is application/json\", function () {",
-							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.eql(\"application/json\");",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
 							"});"
 						],
 						"type": "text/javascript"

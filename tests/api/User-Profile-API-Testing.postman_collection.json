@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "User Profile API Testing",
+    "description": "User Profile Update API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Setup Authentication",
+      "item": [
+        {
+          "name": "Login Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Login should be successful', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response should contain access token', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('access_token');",
+                  "    pm.expect(response.access_token).to.be.a('string');",
+                  "    pm.expect(response.access_token).to.not.be.empty;",
+                  "    ",
+                  "    // Set token for API testing",
+                  "    pm.environment.set('customer_token', response.access_token);",
+                  "    pm.environment.set('valid_token', response.access_token);",
+                  "    ",
+                  "    // Extract user ID from token",
+                  "    try {",
+                  "        const payload = JSON.parse(atob(response.access_token.split('.')[1]));",
+                  "        pm.environment.set('customer_user_id', payload.sub);",
+                  "        pm.environment.set('own_user_id', payload.sub);",
+                  "    } catch (e) {",
+                  "        pm.environment.set('customer_user_id', '01K1MJDQZRBM59XPT1E28BNN0J');",
+                  "        pm.environment.set('own_user_id', '01K1MJDQZRBM59XPT1E28BNN0J');",
+                  "    }",
+                  "});",
+                  "",
+                  "// Set test data for different scenarios",
+                  "pm.environment.set('invalid_token', 'invalid.jwt.token');",
+                  "pm.environment.set('expired_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');",
+                  "pm.environment.set('other_user_id', '01K1MJDQZRBM59XPT1E28BOTHER');",
+                  "pm.environment.set('admin_user_id', '01K1MJDQZRBM59XPT1E28ADMIN');",
+                  "pm.environment.set('nonexistent_user_id', '01K1MJDQZRBM59NONEXISTENT');"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"welcome01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/login",
+              "host": ["{{base_url}}"],
+              "path": ["users", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. API Tests",
+      "item": [
+        {
+          "name": "User Profile API Test",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get test data from CSV",
+                  "const testCase = pm.iterationData.get('test_case');",
+                  "const description = pm.iterationData.get('description');",
+                  "const expectedStatus = pm.iterationData.get('expected_status');",
+                  "const testType = pm.iterationData.get('test_type');",
+                  "",
+                  "// Set authentication with valid token",
+                  "const authHeader = 'Bearer ' + pm.environment.get('valid_token');",
+                  "pm.request.headers.add({key: 'Authorization', value: authHeader});",
+                  "",
+                  "// Set user ID in URL",
+                  "const targetUserId = pm.environment.get('own_user_id');",
+                  "const baseUrl = pm.environment.get('base_url');",
+                  "pm.request.url = `${baseUrl}/users/${targetUserId}`;"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const testCase = pm.iterationData.get('test_case');",
+                  "const description = pm.iterationData.get('description');",
+                  "const expectedStatus = parseInt(pm.iterationData.get('expected_status'));",
+                  "",
+                  "// Main test - API Status Code",
+                  "pm.test(`${testCase}: ${description}`, function () {",
+                  "    pm.response.to.have.status(expectedStatus);",
+                  "});",
+                  "",
+                  "// Response Time Test",
+                  "pm.test(`${testCase}: Response time should be reasonable`, function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"{{first_name}}\",\n  \"last_name\": \"{{last_name}}\",\n  \"email\": \"{{email}}\",\n  \"dob\": \"{{dob}}\",\n  \"address\": \"{{address}}\",\n  \"city\": \"{{city}}\",\n  \"state\": \"{{state}}\",\n  \"country\": \"{{country}}\",\n  \"postcode\": \"{{postcode}}\",\n  \"phone\": \"{{phone}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/users/{{customer_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["users", "{{customer_user_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set test run timestamp",
+          "pm.environment.set('api_test_run_timestamp', new Date().toISOString());"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Test completed"
+        ]
+      }
+    }
+  ]
+}

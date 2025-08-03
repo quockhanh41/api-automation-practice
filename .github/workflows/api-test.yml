@@ -18,6 +18,7 @@ on:
           - login-only
           - invoices-only
           - products-only
+          - user-profile-only
       environment:
         description: 'Target environment'
         required: false
@@ -165,6 +166,7 @@ jobs:
         LOGIN_RESULT=0
         INVOICES_RESULT=0
         PRODUCTS_RESULT=0
+        USER_PROFILE_RESULT=0
         
         # Test suite 1: Login tests
         if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "login-only" ]]; then
@@ -241,6 +243,31 @@ jobs:
           echo "⏭️ Skipping create product tests (not selected)"
         fi
         
+        # Test suite 4: User profile tests
+        if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "user-profile-only" ]]; then
+          if [ -f "tests/api/User-Profile-API-Testing.postman_collection.json" ] && [ -f "tests/api/user-profile-api-test-data.csv" ]; then
+            echo "📋 Running user profile tests with CSV data..."
+            if newman run tests/api/User-Profile-API-Testing.postman_collection.json \
+              --iteration-data tests/api/user-profile-api-test-data.csv \
+              --environment tests/api/environment.json \
+              --reporters cli,htmlextra \
+              --reporter-htmlextra-export reports/user-profile-dynamic-tests.html \
+              --reporter-htmlextra-title "User Profile Tests Report" \
+              --reporter-htmlextra-showOnlyFails; then
+              echo "✅ User profile tests completed successfully"
+              USER_PROFILE_RESULT=0
+            else
+              echo "❌ User profile tests failed, but continuing with other tests..."
+              USER_PROFILE_RESULT=1
+            fi
+          else
+            echo "⚠️ User profile test files not found, skipping..."
+            USER_PROFILE_RESULT=2
+          fi
+        else
+          echo "⏭️ Skipping user profile tests (not selected)"
+        fi
+        
         # Chạy thêm full test collections (nếu có)
         echo "📋 Running additional full test collections..."
         FULL_TESTS_RESULT=0
@@ -267,6 +294,7 @@ jobs:
         echo "Login Tests: $([ $LOGIN_RESULT -eq 0 ] && echo "✅ PASSED" || [ $LOGIN_RESULT -eq 1 ] && echo "❌ FAILED" || echo "⏭️ SKIPPED")"
         echo "Get Invoices Tests: $([ $INVOICES_RESULT -eq 0 ] && echo "✅ PASSED" || [ $INVOICES_RESULT -eq 1 ] && echo "❌ FAILED" || echo "⏭️ SKIPPED")"
         echo "Create Product Tests: $([ $PRODUCTS_RESULT -eq 0 ] && echo "✅ PASSED" || [ $PRODUCTS_RESULT -eq 1 ] && echo "❌ FAILED" || echo "⏭️ SKIPPED")"
+        echo "User Profile Tests: $([ $USER_PROFILE_RESULT -eq 0 ] && echo "✅ PASSED" || [ $USER_PROFILE_RESULT -eq 1 ] && echo "❌ FAILED" || echo "⏭️ SKIPPED")"
         echo "Full Tests: $([ $FULL_TESTS_RESULT -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
         echo "=================================="
         
@@ -276,8 +304,8 @@ jobs:
         echo "✅ All Newman tests completed!"
         
         # Calculate overall result - fail workflow only if ALL selected tests failed
-        TOTAL_FAILURES=$((LOGIN_RESULT + INVOICES_RESULT + PRODUCTS_RESULT + FULL_TESTS_RESULT))
-        if [ $TOTAL_FAILURES -gt 3 ]; then
+        TOTAL_FAILURES=$((LOGIN_RESULT + INVOICES_RESULT + PRODUCTS_RESULT + USER_PROFILE_RESULT + FULL_TESTS_RESULT))
+        if [ $TOTAL_FAILURES -gt 4 ]; then
           echo "🚨 Critical: All tests failed. Failing the workflow."
           exit 1
         else

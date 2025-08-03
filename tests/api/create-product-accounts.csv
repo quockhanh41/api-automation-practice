@@ -1,4 +1,0 @@
-name,description,price,category_id,brand_id,product_image_id,is_location_offer,is_rental,expected_status
-Sản phẩm A,Mô tả A,99.99,1,1,1,false,false,201
-Sản phẩm B,Mô tả B,49.50,2,2,2,true,false,201
-,Thiếu tên,10.00,1,1,1,false,false,422 

@@ -1,0 +1,17 @@
+email,password,expected_status
+admin@practicesoftwaretesting.com,welcome01,200
+customer@practicesoftwaretesting.com,welcome01,200
+customer2@practicesoftwaretesting.com,welcome01,200
+ADMIN@PRACTICESOFTWARETESTING.COM,welcome01,200
+CUSTOMER@PRACTICESOFTWARETESTING.COM,welcome01,200
+nonexistent@example.com,welcome01,401
+admin@practicesoftwaretesting.com,wrongpassword,401
+customer@practicesoftwaretesting.com,incorrectpass,401
+customer2@practicesoftwaretesting.com,wrongpass,401
+invalid@practicesoftwaretesting.com,anypassword,401
+,welcome01,422
+admin@practicesoftwaretesting.com,,422
+"",welcome01,422
+customer@practicesoftwaretesting.com,"",422
+locked@practicesoftwaretesting.com,welcome01,423
+forbidden@practicesoftwaretesting.com,welcome01,403 

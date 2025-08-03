@@ -46,36 +46,6 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get Invoices Fail - Unauthorized",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Response status code is 401\", function () {",
-							"    pm.expect(pm.response.code).to.equal(401);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/invoices",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"invoices"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"variable": [

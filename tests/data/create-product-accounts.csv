@@ -1,0 +1,17 @@
+name,description,price,category_id,brand_id,product_image_id,is_location_offer,is_rental,expected_status
+Sản phẩm A,Mô tả A,99.99,1,1,1,false,false,201
+Sản phẩm B,Mô tả B,49.50,2,2,2,true,false,201
+,Thiếu tên,10.00,1,1,1,false,false,422
+Laptop Gaming,Thiết bị chơi game hiệu suất cao,1299.99,1,1,1,false,false,201
+Smartphone Pro,,899.50,2,2,2,true,false,201
+Màn hình 4K,Thiết bị hiển thị độ phân giải cao,0.00,1,1,1,false,false,201
+Bàn phím cơ,Thiết bị nhập liệu chuyên nghiệp,999999.99,2,2,2,false,true,201
+Tai nghe Bluetooth,Thiết bị âm thanh không dây chất lượng cao,199.99,1,1,1,true,false,201
+Chuột gaming,Thiết bị điều khiển chuyên nghiệp cho game thủ,299.50,2,2,2,false,false,201
+Webcam HD,Thiết bị camera chất lượng cao cho họp trực tuyến,149.99,1,1,1,false,true,201
+Microphone USB,Thiết bị thu âm chuyên nghiệp,399.99,2,2,2,true,false,201
+Sản phẩm với tên rất dài để test validation rule tối đa 120 ký tự,Đây là mô tả sản phẩm với tên dài để kiểm tra validation rule về độ dài tối đa của tên sản phẩm,89.99,1,1,1,false,false,201
+,Thiếu giá,0.00,1,1,1,false,false,422
+Sản phẩm test,Test description,99.99,999,1,1,false,false,422
+Sản phẩm test,Test description,99.99,1,999,1,false,false,422
+Sản phẩm với ký tự đặc biệt ²³,Test description,99.99,1,1,1,false,false,422 

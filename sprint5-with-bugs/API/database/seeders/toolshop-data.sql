@@ -12,6 +12,17 @@ VALUES (1, 'John', 'Doe', 'Test street 123', 'Utrecht', NULL, 'The Netherlands',
        (3, 'Jack', 'Howe', 'Test street 654', 'Frankfurt', NULL, 'Germany', NULL, NULL, '1980-03-03',
         'customer2@practicesoftwaretesting.com', '9e2ed9cb4bf54a6b9dc4669a1d295466b2585c4346092bffb5333098431cd61d', 'user');
 
+/** locked and forbidden User **/
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `address`, `city`, `state`, `country`, `postcode`, `phone`, `dob`,
+                     `email`, `password`, `role`, `failed_login_attempts`)
+VALUES (4, 'Locked', 'User', 'Test street 111', 'Amsterdam', NULL, 'The Netherlands', NULL, NULL, '1980-04-04',
+        'locked@practicesoftwaretesting.com', '9e2ed9cb4bf54a6b9dc4669a1d295466b2585c4346092bffb5333098431cd61d', 'user', 4);
+        
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `address`, `city`, `state`, `country`, `postcode`, `phone`, `dob`,
+                     `email`, `password`, `role`, `enabled`)
+VALUES (5, 'Forbidden', 'User', 'Test street 222', 'Amsterdam', NULL, 'The Netherlands', NULL, NULL, '1980-04-04',
+        'forbidden@practicesoftwaretesting.com', '9e2ed9cb4bf54a6b9dc4669a1d295466b2585c4346092bffb5333098431cd61d', 'user', false);
+
 /** Brand names **/
 INSERT INTO `brands` (`name`, `slug`)
 VALUES ("Brand name 1", "brand-name-1"),

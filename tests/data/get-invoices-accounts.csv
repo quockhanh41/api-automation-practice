@@ -1,0 +1,16 @@
+access_token,expected_status
+valid_token,200
+,401
+admin_valid_token,200
+user_valid_token,200
+expired_token,401
+invalid_token_format,401
+malformed_token,401
+empty_token,401
+null_token,401
+token_without_bearer,401
+token_with_wrong_role,401
+token_with_expired_payload,401
+token_with_invalid_signature,401
+token_with_missing_claims,401
+token_with_wrong_issuer,401 
