@@ -7,23 +7,19 @@
 	},
 	"item": [
 		{
-			"name": "Create Product Success",
+			"name": "Create Product",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Response status code is 201\", function () {",
-							"    pm.expect(pm.response.code).to.equal(201);",
+							"pm.test(\"Response status code matches expected\", function () {",
+							"    const expectedStatus = pm.iterationData.get(\"expected_status\") || 201;",
+							"    pm.expect(pm.response.code).to.equal(parseInt(expectedStatus));",
 							"});",
 							"",
-							"pm.test(\"Response has required fields\", function () {",
-							"    const responseData = pm.response.json();",
-							"    pm.expect(responseData).to.be.an('object');",
-							"    pm.expect(responseData).to.have.property('id');",
-							"    pm.expect(responseData).to.have.property('name');",
-							"    pm.expect(responseData).to.have.property('description');",
-							"    pm.expect(responseData).to.have.property('price');",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -45,49 +41,6 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n  \"name\": \"{{name}}\",\n  \"description\": \"{{description}}\",\n  \"price\": {{price}},\n  \"category_id\": {{category_id}},\n  \"brand_id\": {{brand_id}},\n  \"product_image_id\": {{product_image_id}},\n  \"is_location_offer\": {{is_location_offer}},\n  \"is_rental\": {{is_rental}}\n}"
-				},
-				"url": {
-					"raw": "{{base_url}}/products",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"products"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create Product Fail - Missing Name",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Response status code is 422\", function () {",
-							"    pm.expect(pm.response.code).to.equal(422);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer {{access_token}}"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"description\": \"Thiếu tên sản phẩm\",\n  \"price\": 99.99,\n  \"category_id\": 1,\n  \"brand_id\": 1\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/products",

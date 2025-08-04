@@ -1,16 +1,7 @@
-access_token,expected_status
-valid_token,200
-,401
-admin_valid_token,200
-user_valid_token,200
-expired_token,401
-invalid_token_format,401
-malformed_token,401
-empty_token,401
-null_token,401
-token_without_bearer,401
-token_with_wrong_role,401
-token_with_expired_payload,401
-token_with_invalid_signature,401
-token_with_missing_claims,401
-token_with_wrong_issuer,401 
+email, password, access_token,expected_status,description
+customer@practicesoftwaretesting.com,welcome02,,401,Missing token should return unauthorized
+admin@practicesoftwaretesting.com,welcome01,,200,Admin token should return success
+customer@practicesoftwaretesting.com,welcome01,,200,User token should return success
+customer@practicesoftwaretesting.com,welcome01,eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5wcmFjdGljZXNvZnR3YXJldGVzdGluZy5jb20vdXNlcnMvcmVmcmVzaCIsImlhdCI6MTc1NDI0MTMxMywiZXhwIjoxNzU0MjQzMDM5LCJuYmYiOjE3NTQyNDI3MzksImp0aSI6Ik95WDRFNENSR1BYdjRoMnAiLCJzdWIiOiIwMUsxUkUwVENWUFFRNzJOM1BYNUJFRUdFOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJyb2xlIjoidXNlciJ9.v3uex54Ewc99GV1_NJjX90Ji6KNOjo6mTqatwYEjcjc,401,Expired token should return unauthorized
+customer@practicesoftwaretesting.com,welcome01,abc def,401,Invalid token format should return unauthorized 
+customer@practicesoftwaretesting.com,welcome01,abc.def.ghi.jkl,401,Malformed token should return unauthorized

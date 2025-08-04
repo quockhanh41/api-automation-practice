@@ -1,17 +1,17 @@
-email,password,expected_status
-admin@practicesoftwaretesting.com,welcome01,200
-customer@practicesoftwaretesting.com,welcome01,200
-customer2@practicesoftwaretesting.com,welcome01,200
-ADMIN@PRACTICESOFTWARETESTING.COM,welcome01,200
-CUSTOMER@PRACTICESOFTWARETESTING.COM,welcome01,200
-nonexistent@example.com,welcome01,401
-admin@practicesoftwaretesting.com,wrongpassword,401
-customer@practicesoftwaretesting.com,incorrectpass,401
-customer2@practicesoftwaretesting.com,wrongpass,401
-invalid@practicesoftwaretesting.com,anypassword,401
-,welcome01,422
-admin@practicesoftwaretesting.com,,422
-"",welcome01,422
-customer@practicesoftwaretesting.com,"",422
-locked@practicesoftwaretesting.com,welcome01,423
-forbidden@practicesoftwaretesting.com,welcome01,403 
+email,password,expected_status,description
+admin@practicesoftwaretesting.com,welcome01,200,Valid admin login should return success
+customer@practicesoftwaretesting.com,welcome01,200,Valid customer login should return success
+customer2@practicesoftwaretesting.com,welcome01,200,Valid customer2 login should return success
+ADMIN@PRACTICESOFTWARETESTING.COM,welcome01,200,Admin login with uppercase email should return success
+CUSTOMER@PRACTICESOFTWARETESTING.COM,welcome01,200,Customer login with uppercase email should return success
+nonexistent@example.com,welcome01,401,Login with non-existent email should return unauthorized
+admin@practicesoftwaretesting.com,wrongpassword,401,Admin login with wrong password should return unauthorized
+customer@practicesoftwaretesting.com,incorrectpass,401,Customer login with incorrect password should return unauthorized
+customer2@practicesoftwaretesting.com,wrongpass,401,Customer2 login with wrong password should return unauthorized
+invalid@practicesoftwaretesting.com,anypassword,401,Login with invalid email should return unauthorized
+,welcome01,422,Login with empty email should return validation error
+admin@practicesoftwaretesting.com,,422,Login with empty password should return validation error
+"",welcome01,422,Login with empty string email should return validation error
+customer@practicesoftwaretesting.com,"",422,Login with empty string password should return validation error
+locked@practicesoftwaretesting.com,welcome01,423,Login with locked account should return account locked error
+forbidden@practicesoftwaretesting.com,welcome01,403,Login with forbidden account should return forbidden error 

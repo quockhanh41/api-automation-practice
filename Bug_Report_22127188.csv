@@ -1,0 +1,138 @@
+BugID,Status,Requirement Name,Summary,Steps to reproduce,Severity,Frequency,Priority
+BUG_Login_EmptyEmail_01,New,User Authentication,[User Authentication] Empty Email Field - Should return validation error with proper status code.,"1. Navigate to login page.
+2. Leave email field empty.
+3. Enter valid password (welcome01).
+4. Click login button.
+
+Test Data: Email: ; Password: welcome01
+
+Expected Result: Validation error displayed. Status code: 422
+Actual Result: Response Body: {""error"": ""Unauthorized""} Status code: 401",Minor,Always,High
+BUG_Login_EmptyPassword_01,New,User Authentication,[User Authentication] Empty Password Field - Should return validation error with proper status code.,"1. Navigate to login page.
+2. Enter valid admin email (admin@practicesoftwaretesting.com).
+3. Leave password field empty.
+4. Click login button.
+
+Test Data: Email: admin@practicesoftwaretesting.com; Password:
+
+Expected Result: Validation error displayed. Status code: 422
+Actual Result: Response Body: {""error"": ""Unauthorized""} Status code: 401",Minor,Always,High
+BUG_Login_EmptyStringEmail_01,New,User Authentication,[User Authentication] Empty String Email - Should return validation error with proper status code.,"1. Navigate to login page.
+2. Enter empty string in email field.
+3. Enter valid password (welcome01).
+4. Click login button.
+
+Test Data: Email: """"; Password: welcome01
+
+Expected Result: Validation error displayed. Status code: 422
+Actual Result: Response Body: {""error"": ""Unauthorized""} Status code: 401",Minor,Always,High
+BUG_Login_EmptyStringPassword_01,New,User Authentication,[User Authentication] Empty String Password - Should return validation error with proper status code.,"1. Navigate to login page.
+2. Enter valid customer email (customer@practicesoftwaretesting.com).
+3. Enter empty string in password field.
+4. Click login button.
+
+Test Data: Email: customer@practicesoftwaretesting.com; Password: """"
+
+Expected Result: Validation error displayed. Status code: 422
+Actual Result: Response Body: {""error"": ""Unauthorized""} Status code: 401",Minor,Always,High
+BUG_Login_LockedAccount_01,New,User Authentication,[User Authentication] Locked Account Login - Should return proper status code for locked account.,"1. Navigate to login page.
+2. Enter locked account email (locked@practicesoftwaretesting.com).
+3. Enter valid password (welcome01).
+4. Click login button.
+
+Test Data: Email: locked@practicesoftwaretesting.com; Password: welcome01
+
+Expected Result: Account locked error displayed. Status code: 423
+Actual Result: Response Body: {""error"": ""Account locked.""} Status code: 400",Tweak,Always,Medium
+BUG_Invoice_MissingToken_01,New,Invoice Management,[Invoice Management] Missing Token Access - Should prevent unauthorized access without proper authentication.,"1. Attempt login with wrong password.
+2. Send GET request to invoices endpoint without valid token.
+
+Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome02; Token:
+
+Expected Result: Unauthorized error returned. Status code: 401
+Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+BUG_Invoice_ExpiredToken_01,New,Invoice Management,[Invoice Management] Expired Token Access - Should prevent access with expired authentication token.,"1. Send GET request to invoices endpoint.
+2. Include expired token in Authorization header.
+
+Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5wcmFjdGljZXNvZnR3YXJldGVzdGluZy5jb20vdXNlcnMvcmVmcmVzaCIsImlhdCI6MTc1NDI0MTMxMywiZXhwIjoxNzU0MjQzMDM5LCJuYmYiOjE3NTQyNDI3MzksImp0aSI6Ik85WDRFNENSR1BYdjRoMnAiLCJzdWIiOiIwMUsxUkUwVENWUFFRNzJOM1BYNUJFRUdFOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJyb2xlIjoidXNlciJ9.v3uex54Ewc99GV1_NJjX90Ji6KNOjo6mTqatwYEjcjc
+
+Expected Result: Unauthorized error returned. Status code: 401
+Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+BUG_Invoice_InvalidTokenFormat_01,New,Invoice Management,[Invoice Management] Invalid Token Format Access - Should prevent access with malformed token format.,"1. Send GET request to invoices endpoint.
+2. Include invalid format token in Authorization header.
+
+Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: abc def
+
+Expected Result: Unauthorized error returned. Status code: 401
+Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+BUG_Invoice_MalformedToken_01,New,Invoice Management,[Invoice Management] Malformed Token Access - Should prevent access with malformed authentication token.,"1. Send GET request to invoices endpoint.
+2. Include malformed token in Authorization header.
+
+Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: abc.def.ghi.jkl
+
+Expected Result: Unauthorized error returned. Status code: 401
+Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+BUG_Product_EmptyDescription_01,New,Product Management,[Product Management] Empty Description Product Creation - Should allow product creation with empty description.,"1. Send POST request to products endpoint.
+2. Include smartphone data without description.
+3. Include authentication token.
+
+Test Data: Name: Smartphone Pro; Description: ; Price: 899.50; Category: 2; Brand: 2; Image: 2; Location Offer: true; Rental: false
+
+Expected Result: Product created successfully. Status code: 201
+Actual Result: Validation error returned. Status code: 422",Tweak,Always,Low
+BUG_Product_InvalidCategory_01,New,Product Management,[Product Management] Invalid Category Product Creation - Should return proper validation error instead of server error.,"1. Send POST request to products endpoint.
+2. Include product data with invalid category ID (999).
+3. Include authentication token.
+
+Test Data: Name: Sản phẩm test; Description: Test description; Price: 99.99; Category: 999; Brand: 1; Image: 1; Location Offer: false; Rental: false
+
+Expected Result: Validation error returned. Status code: 422
+Actual Result: Response Body: {""message"": ""Something went wrong""}. Status code: 500",Minor,Always,Medium
+BUG_Product_InvalidBrand_01,New,Product Management,[Product Management] Invalid Brand Product Creation - Should return proper validation error instead of server error.,"1. Send POST request to products endpoint.
+2. Include product data with invalid brand ID (999).
+3. Include authentication token.
+
+Test Data: Name: Sản phẩm test; Description: Test description; Price: 99.99; Category: 1; Brand: 999; Image: 1; Location Offer: false; Rental: false
+
+Expected Result: Validation error returned. Status code: 422
+Actual Result: Response Body: {""message"": ""Something went wrong""}. Status code: 500",Minor,Always,Medium
+BUG_Product_SpecialCharacters_01,New,Product Management,[Product Management] Special Characters Product Creation - Should validate special characters in product name.,"1. Send POST request to products endpoint.
+2. Include product data with special characters in name.
+3. Include authentication token.
+
+Test Data: Name: Sản phẩm với ký tự đặc biệt ²³; Description: Test description; Price: 99.99; Category: 1; Brand: 1; Image: 1; Location Offer: false; Rental: false
+
+Expected Result: Validation error returned. Status code: 422
+Actual Result: Product created successfully. Status code: 201",Tweak,Always,Low
+BUG_Profile_PhoneTooLong_01,New,User Profile,[User Profile] Phone Number Length Validation - Should validate phone number maximum length.,"1. Send PUT request to profile endpoint.
+2. Include profile data with phone over 24 characters.
+3. Include authentication token.
+
+Test Data: First Name: John; Last Name: Doe; Email: customer@practicesoftwaretesting.com; DOB: 1990-01-01; Address: 123 Main St; City: Test City; State: Test State; Country: Test Country; Postcode: 12345; Phone: 1234567890123456789012345678901234567890
+
+Expected Result: Validation error: The phone field must not be greater than 24 characters. Status code: 422
+Actual Result: Profile updated successfully. Status code: 200",Tweak,Always,Low
+BUG_Profile_InvalidDateFormat_01,New,User Profile,[User Profile] Invalid Date Format Validation - Should handle invalid date format gracefully.,"1. Send PUT request to profile endpoint.
+2. Include profile data with invalid date format.
+3. Include authentication token.
+
+Test Data: First Name: John; Last Name: Doe; Email: customer@practicesoftwaretesting.com; DOB: 31-12-1990; Address: 123 Main St; City: Test City; State: Test State; Country: Test Country; Postcode: 12345; Phone: 1234567890
+
+Expected Result: Validation error: The dob field must be a valid date. Status code: 422
+Actual Result: Response Body: {""message"": ""Something went wrong""}. Status code: 500",Minor,Always,Medium
+BUG_Profile_FutureDOB_01,New,User Profile,[User Profile] Future Birth Date Validation - Should validate that birth date is not in the future.,"1. Send PUT request to profile endpoint.
+2. Include profile data with future birth date.
+3. Include authentication token.
+
+Test Data: First Name: John; Last Name: Doe; Email: customer@practicesoftwaretesting.com; DOB: 2030-01-01; Address: 123 Main St; City: Test City; State: Test State; Country: Test Country; Postcode: 12345; Phone: 1234567890
+
+Expected Result: Validation error: The dob field must be before today. Status code: 422
+Actual Result: Profile updated successfully. Status code: 200",Tweak,Always,Medium
+BUG_Profile_SQLInjection_01,New,User Profile,[User Profile] SQL Injection Security Vulnerability - System should handle SQL injection attempts safely.,"1. Send PUT request to profile endpoint.
+2. Include profile data with SQL injection payload.
+3. Include authentication token.
+
+Test Data: First Name: John'; DROP TABLE users; --; Last Name: Doe; Email: customer@practicesoftwaretesting.com; DOB: 1990-01-01; Address: 123 Main St; City: Test City; State: Test State; Country: Test Country; Postcode: 12345; Phone: 1234567890
+
+Expected Result: Internal Server Error returned safely. Status code: 500
+Actual Result: Profile updated successfully. Status code: 200",Critical,Always,High

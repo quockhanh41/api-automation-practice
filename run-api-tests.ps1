@@ -127,7 +127,7 @@ foreach ($testSuite in $testSuites) {
     $dataFile = $testSuite.Data
     $testName = $testSuite.Name
     $description = $testSuite.Description
-    $environmentFile = "tests/collection/environment.json"
+    $environmentFile = "tests/environments/local.postman_environment.json"
     
     Write-Host "[SUITE] Starting: $testName" -ForegroundColor Magenta
     Write-Host "[DESC] $description" -ForegroundColor Gray
@@ -178,10 +178,10 @@ Write-Host "[REPORTS] Check the following HTML reports:" -ForegroundColor Cyan
 Write-Host "  • reports/login-tests.html" -ForegroundColor White
 Write-Host "  • reports/get-invoices-tests.html" -ForegroundColor White
 Write-Host "  • reports/create-product-tests.html" -ForegroundColor White
-Write-Host "  • reports/user-profile-api-tests.html" -ForegroundColor White
+Write-Host "  • reports/user-profile-update-tests.html" -ForegroundColor White
 Write-Host ""
 Write-Host "[INFO] Test Summary:" -ForegroundColor Yellow
 Write-Host "  ✓ Login Tests: Authentication validation" -ForegroundColor Green
 Write-Host "  ✓ Get Invoices Tests: Data retrieval validation" -ForegroundColor Green
 Write-Host "  ✓ Create Product Tests: Data creation validation" -ForegroundColor Green
-Write-Host "  ✓ User Profile API Tests: Profile management validation" -ForegroundColor Green
+Write-Host "  ✓ User Profile Update Tests: Profile management validation" -ForegroundColor Green
