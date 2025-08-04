@@ -170,11 +170,11 @@ jobs:
         
         # Test suite 1: Login tests
         if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "login-only" ]]; then
-          if [ -f "tests/api/login-tests.postman_collection.json" ] && [ -f "tests/api/data/user-accounts.csv" ]; then
+          if [ -f "tests/collection/login-tests.postman_collection.json" ] && [ -f "tests/data/user-accounts.csv" ]; then
             echo "📋 Running login tests with CSV data..."
-            if newman run tests/api/login-tests.postman_collection.json \
-              --iteration-data tests/api/data/user-accounts.csv \
-              --environment tests/api/environment.json \
+            if newman run tests/collection/login-tests.postman_collection.json \
+              --iteration-data tests/data/user-accounts.csv \
+              --environment tests/collection/environment.json \
               --reporters cli,htmlextra \
               --reporter-htmlextra-export reports/login-dynamic-tests.html \
               --reporter-htmlextra-title "Login Tests Report" \
@@ -195,11 +195,11 @@ jobs:
         
         # Test suite 2: Get invoices tests  
         if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "invoices-only" ]]; then
-          if [ -f "tests/api/get-invoices-tests.postman_collection.json" ] && [ -f "tests/api/data/get-invoices-accounts.csv" ]; then
+          if [ -f "tests/collection/get-invoices-tests.postman_collection.json" ] && [ -f "tests/data/get-invoices-accounts.csv" ]; then
             echo "📋 Running get invoices tests with CSV data..."
-            if newman run tests/api/get-invoices-tests.postman_collection.json \
-              --iteration-data tests/api/data/get-invoices-accounts.csv \
-              --environment tests/api/environment.json \
+            if newman run tests/collection/get-invoices-tests.postman_collection.json \
+              --iteration-data tests/data/get-invoices-accounts.csv \
+              --environment tests/collection/environment.json \
               --reporters cli,htmlextra \
               --reporter-htmlextra-export reports/get-invoices-dynamic-tests.html \
               --reporter-htmlextra-title "Get Invoices Tests Report" \
@@ -220,11 +220,11 @@ jobs:
         
         # Test suite 3: Create product tests
         if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "products-only" ]]; then
-          if [ -f "tests/api/create-product-tests.postman_collection.json" ] && [ -f "tests/api/data/create-product-accounts.csv" ]; then
+          if [ -f "tests/collection/create-product-tests.postman_collection.json" ] && [ -f "tests/data/create-product-accounts.csv" ]; then
             echo "📋 Running create product tests with CSV data..."
-            if newman run tests/api/create-product-tests.postman_collection.json \
-              --iteration-data tests/api/data/create-product-accounts.csv \
-              --environment tests/api/environment.json \
+            if newman run tests/collection/create-product-tests.postman_collection.json \
+              --iteration-data tests/data/create-product-accounts.csv \
+              --environment tests/collection/environment.json \
               --reporters cli,htmlextra \
               --reporter-htmlextra-export reports/create-product-dynamic-tests.html \
               --reporter-htmlextra-title "Create Product Tests Report" \
@@ -245,11 +245,11 @@ jobs:
         
         # Test suite 4: User profile tests
         if [[ "${{ github.event.inputs.test_suite || 'all' }}" == "all" || "${{ github.event.inputs.test_suite || 'all' }}" == "user-profile-only" ]]; then
-          if [ -f "tests/api/User-Profile-API-Testing.postman_collection.json" ] && [ -f "tests/api/data/user-profile-api-test-data.csv" ]; then
+          if [ -f "tests/collection/User-Profile-API-Testing.postman_collection.json" ] && [ -f "tests/data/user-profile-api-test-data.csv" ]; then
             echo "📋 Running user profile tests with CSV data..."
-            if newman run tests/api/User-Profile-API-Testing.postman_collection.json \
-              --iteration-data tests/api/data/user-profile-api-test-data.csv \
-              --environment tests/api/environment.json \
+            if newman run tests/collection/User-Profile-API-Testing.postman_collection.json \
+              --iteration-data tests/data/user-profile-api-test-data.csv \
+              --environment tests/collection/environment.json \
               --reporters cli,htmlextra \
               --reporter-htmlextra-export reports/user-profile-dynamic-tests.html \
               --reporter-htmlextra-title "User Profile Tests Report" \
@@ -271,12 +271,12 @@ jobs:
         # Chạy thêm full test collections (nếu có)
         echo "📋 Running additional full test collections..."
         FULL_TESTS_RESULT=0
-        for collection in tests/api/*-full-tests.postman_collection.json; do
+        for collection in tests/collection/*-full-tests.postman_collection.json; do
           if [ -f "$collection" ]; then
             filename=$(basename "$collection" .postman_collection.json)
             echo "🔄 Running $filename..."
             if newman run "$collection" \
-              --environment tests/api/environment.json \
+              --environment tests/collection/environment.json \
               --reporters cli,htmlextra \
               --reporter-htmlextra-export "reports/$filename.html" \
               --reporter-htmlextra-title "$filename Report" \
