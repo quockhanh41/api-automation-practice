@@ -15,27 +15,27 @@
 
 Write-Host "[START] Starting API Dynamic Tests với CSV Data..." -ForegroundColor Green
 
-# Start Docker services
-# Write-Host "[DOCKER] Starting Docker containers..." -ForegroundColor Yellow
-# docker compose -f docker-compose.yml up -d --force-recreate
+Start Docker services
+Write-Host "[DOCKER] Starting Docker containers..." -ForegroundColor Yellow
+docker compose -f docker-compose.yml up -d --force-recreate
 
-# # Wait for services
-# Write-Host "[WAIT] Waiting for services to be ready..." -ForegroundColor Yellow
-# Start-Sleep -Seconds 30
+# Wait for services
+Write-Host "[WAIT] Waiting for services to be ready..." -ForegroundColor Yellow
+Start-Sleep -Seconds 30
 
-# # Setup database
-# Write-Host "[DATABASE] Setting up database..." -ForegroundColor Yellow
-# docker compose exec laravel-api php artisan migrate --force
-# docker compose exec laravel-api php artisan db:seed --force
+# Setup database
+Write-Host "[DATABASE] Setting up database..." -ForegroundColor Yellow
+docker compose exec laravel-api php artisan migrate --force
+docker compose exec laravel-api php artisan db:seed --force
 
-# # Check if Newman is installed
-# if (-not (Get-Command newman -ErrorAction SilentlyContinue)) {
-#     Write-Host "[INSTALL] Installing Newman..." -ForegroundColor Cyan
-#     npm install -g newman newman-reporter-htmlextra
-# }
+# Check if Newman is installed
+if (-not (Get-Command newman -ErrorAction SilentlyContinue)) {
+    Write-Host "[INSTALL] Installing Newman..." -ForegroundColor Cyan
+    npm install -g newman newman-reporter-htmlextra
+}
 
-# # Run tests
-# Write-Host "[TESTS] Running API tests..." -ForegroundColor Green
+# Run tests
+Write-Host "[TESTS] Running API tests..." -ForegroundColor Green
 
 # Test basic endpoints first
 Write-Host "[TEST] Testing API status endpoint..." -ForegroundColor Cyan

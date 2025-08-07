@@ -1,0 +1,33 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+
+\begin{document}
+
+\subsection{Tổng kết kết quả test}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{API} & \textbf{Test Cases} & \textbf{Passed} & \textbf{Failed} & \textbf{Pass Rate} \\
+\hline
+POST /users/login & 16 & 11 & 5 & 68.75\% \\
+\hline
+GET /invoices & 6 & 2 & 4 & 33.33\% \\
+\hline
+POST /products & 14 & 10 & 4 & 71.43\% \\
+\hline
+PUT /users/\{userId\} & 19 & 14 & 5 & 73.68\% \\
+\hline
+\textbf{TỔNG CỘNG} & \textbf{55} & \textbf{37} & \textbf{18} & \textbf{67.27\%} \\
+\hline
+\end{tabular}
+\caption{Kết quả test tổng quan}
+\end{table}
+
+\end{document}

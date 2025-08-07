@@ -50,28 +50,28 @@ BUG_Invoice_MissingToken_01,New,Invoice Management,[Invoice Management] Missing 
 Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome02; Token:
 
 Expected Result: Unauthorized error returned. Status code: 401
-Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+Actual Result: Invoices retrieved successfully. Status code: 200",Major,Always,High
 BUG_Invoice_ExpiredToken_01,New,Invoice Management,[Invoice Management] Expired Token Access - Should prevent access with expired authentication token.,"1. Send GET request to invoices endpoint.
 2. Include expired token in Authorization header.
 
 Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5wcmFjdGljZXNvZnR3YXJldGVzdGluZy5jb20vdXNlcnMvcmVmcmVzaCIsImlhdCI6MTc1NDI0MTMxMywiZXhwIjoxNzU0MjQzMDM5LCJuYmYiOjE3NTQyNDI3MzksImp0aSI6Ik85WDRFNENSR1BYdjRoMnAiLCJzdWIiOiIwMUsxUkUwVENWUFFRNzJOM1BYNUJFRUdFOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjciLCJyb2xlIjoidXNlciJ9.v3uex54Ewc99GV1_NJjX90Ji6KNOjo6mTqatwYEjcjc
 
 Expected Result: Unauthorized error returned. Status code: 401
-Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+Actual Result: Invoices retrieved successfully. Status code: 200",Major,Always,High
 BUG_Invoice_InvalidTokenFormat_01,New,Invoice Management,[Invoice Management] Invalid Token Format Access - Should prevent access with malformed token format.,"1. Send GET request to invoices endpoint.
 2. Include invalid format token in Authorization header.
 
 Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: abc def
 
 Expected Result: Unauthorized error returned. Status code: 401
-Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+Actual Result: Invoices retrieved successfully. Status code: 200",Major,Always,High
 BUG_Invoice_MalformedToken_01,New,Invoice Management,[Invoice Management] Malformed Token Access - Should prevent access with malformed authentication token.,"1. Send GET request to invoices endpoint.
 2. Include malformed token in Authorization header.
 
 Test Data: Email: customer@practicesoftwaretesting.com; Password: welcome01; Token: abc.def.ghi.jkl
 
 Expected Result: Unauthorized error returned. Status code: 401
-Actual Result: Invoices retrieved successfully. Status code: 200",Critical,Always,High
+Actual Result: Invoices retrieved successfully. Status code: 200",Major,Always,High
 BUG_Product_EmptyDescription_01,New,Product Management,[Product Management] Empty Description Product Creation - Should allow product creation with empty description.,"1. Send POST request to products endpoint.
 2. Include smartphone data without description.
 3. Include authentication token.
@@ -135,4 +135,13 @@ BUG_Profile_SQLInjection_01,New,User Profile,[User Profile] SQL Injection Securi
 Test Data: First Name: John'; DROP TABLE users; --; Last Name: Doe; Email: customer@practicesoftwaretesting.com; DOB: 1990-01-01; Address: 123 Main St; City: Test City; State: Test State; Country: Test Country; Postcode: 12345; Phone: 1234567890
 
 Expected Result: Internal Server Error returned safely. Status code: 500
-Actual Result: Profile updated successfully. Status code: 200",Critical,Always,High
+Actual Result: Profile updated successfully. Status code: 200",Major,Always,High
+BUG_Profile_Minimal_01,New,User Profile,[User Profile] Minimal Profile Update - Should handle minimal required fields gracefully.,"1. Send PUT request to profile endpoint.
+2. Include only required profile fields (First Name, Last Name, Email, Address, City, Country).
+3. Leave optional fields empty.
+4. Include authentication token.
+
+Test Data: First Name: Jane; Last Name: Smith; Email: customer@practicesoftwaretesting.com; DOB: ; Address: 456 Oak Ave; City: Boston; State: ; Country: USA; Postcode: ; Phone:
+
+Expected Result: Profile updated successfully. Status code: 200
+Actual Result: Response Body: {"message": "Something went wrong"}. Status code: 500",Minor,Always,Medium

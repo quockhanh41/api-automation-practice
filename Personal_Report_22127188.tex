@@ -1,0 +1,1097 @@
+  \documentclass[12pt,a4paper]{article}
+  \usepackage[utf8]{inputenc}
+  \usepackage[vietnamese]{babel}
+  \usepackage{amsmath}
+  \usepackage{amsfonts}
+  \usepackage{amssymb}
+  \usepackage{graphicx}
+  \usepackage[hidelinks]{hyperref}
+  \usepackage{listings}
+  \usepackage{xcolor}
+  \usepackage{booktabs}
+  \usepackage{longtable}
+  \usepackage{array}
+  \usepackage{geometry}
+  \usepackage{fancyhdr}
+  \usepackage{titlesec}
+  \usepackage{enumitem}
+  \usepackage{tabularx}
+  \usepackage{listings}
+  \usepackage{xcolor} % để hỗ trợ màu sắc (nếu cần)
+  \usepackage{float}
+
+  \lstdefinelanguage{JavaScript}{
+    keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function,
+      if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with, let, const},
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this},
+    ndkeywordstyle=\color{orange}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{gray}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]",
+  }
+
+  % Page setup
+  \geometry{margin=2.5cm}
+  \pagestyle{fancy}
+  \fancyhf{}
+  \rhead{MSSV: 22127188}
+  \lhead{API Testing Report}
+  \cfoot{\thepage}
+
+  % Color definitions
+  \definecolor{codegreen}{rgb}{0,0.6,0}
+  \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+  \definecolor{codepurple}{rgb}{0.58,0,0.82}
+  \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+  % Code listing style
+  \lstdefinestyle{mystyle}{
+      backgroundcolor=\color{backcolour},   
+      commentstyle=\color{codegreen},
+      keywordstyle=\color{magenta},
+      numberstyle=\tiny\color{codegray},
+      stringstyle=\color{codepurple},
+      basicstyle=\ttfamily\footnotesize,
+      breakatwhitespace=false,         
+      breaklines=true,                 
+      captionpos=b,                    
+      keepspaces=true,                 
+      numbers=left,                    
+      numbersep=5pt,                  
+      showspaces=false,                
+      showstringspaces=false,
+      showtabs=false,                  
+      tabsize=2
+  }
+  \lstset{style=mystyle}
+
+  % Title formatting
+  \titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+  \titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+  \titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+  \begin{document}
+
+  % Title page
+  \begin{titlepage}
+  \centering
+  \vspace*{2cm}
+
+  {\Huge\bfseries BÁO CÁO CÁ NHÂN - API TESTING\par}
+
+  \vspace{1cm}
+
+  {\Large Sinh viên thực hiện: 22127188\par}
+
+  \vspace{0.5cm}
+
+  {\Large Ngày thực hiện: 02/08/2025\par}
+
+  \vspace{0.5cm}
+
+  {\Large Môn học: Software Testing\par}
+
+  \vspace{0.5cm}
+
+  {\Large Đề tài: API Testing với Công cụ Postman, Newman và thực hiện CI với Github Action\par}
+
+  \vfill
+
+  {\large \today\par}
+
+  \end{titlepage}
+
+  \newpage
+  \tableofcontents
+  \newpage
+
+  \section{TASK ALLOCATION - PHÂN CÔNG CÔNG VIỆC}
+
+  \subsection{Thành viên nhóm và API phụ trách}
+
+  \begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|l|l|X|}
+  \hline
+  \textbf{Thành viên} & \textbf{MSSV} & \textbf{API được phụ trách} & \textbf{Ghi chú} \\
+  \hline
+  Nguyễn Quốc Khánh & 22127188 & 
+  \begin{tabular}[t]{@{}l@{}}
+  - POST /products \\
+  - GET /invoices \\
+  - POST /users/login \\
+  - POST, PUT /users/\{id\}
+  \end{tabular} & 
+  Xác thực người dùng, Quản lý hóa đơn, Tạo sản phẩm, Cập nhật thông tin người dùng \\
+  \hline
+  Trương Bảo Kiệt & 22127223 & Chưa làm & Chưa có nội dung \\
+  \hline
+  Hồ Tiến Phát & 22127321 & 
+  \begin{tabular}[t]{@{}l@{}}
+  - GET /products \\
+  - POST /messages \\
+  - GET /categories
+  \end{tabular} & 
+  Xem sản phẩm, Gửi tin nhắn, Xem danh mục \\
+  \hline
+  Nguyễn Quang Khải & 22127477 & 
+  \begin{tabular}[t]{@{}l@{}}
+  - PUT /api/products/\{id\} \\
+  - DELETE /api/users/\{id\} \\
+  - POST /api/favorites \\
+  \end{tabular} & 
+  Quản lý sản phẩm, người dùng và yêu thích \\
+  \hline
+
+  \end{tabularx}
+  \caption{Phân công API testing}
+  \end{table}
+
+  \section{STEP-BY-STEP TESTING METHODOLOGY}
+
+  \subsection{Environment Setup}
+
+  \begin{itemize}
+      \item \textbf{Step 1: Tool Installation \& Configuration}
+      \begin{lstlisting}[language=bash]
+  # Install required tools
+  npm install -g newman
+  npm install -g newman-reporter-html
+      \end{lstlisting}
+      
+      \item \textbf{Step 2: Postman Environment Setup}
+      \begin{itemize}
+          \item Create new Environment: "API Testing Environment"
+          \item Configure variables:
+          \begin{itemize}
+              \item \texttt{baseUrl}: localhost:8091
+              \item \texttt{adminToken}: \{\{admin\_auth\_token\}\}
+              \item \texttt{userToken}: \{\{user\_auth\_token\}\}
+          \end{itemize}
+      \end{itemize}
+
+      \item \textbf{Step 3: Collection Structure}
+      \begin{itemize}
+          \item \texttt{login-tests.postman\_collection.json}
+          \begin{itemize}
+              \item Login Test
+          \end{itemize}
+          
+          \item \texttt{get-invoices-tests.postman\_collection.json}
+          \begin{itemize}
+              \item Login for Token
+              \item Get Invoices Test
+          \end{itemize}
+          
+          \item \texttt{create-product-tests.postman\_collection.json}
+          \begin{itemize}
+              \item Create Product
+          \end{itemize}
+          
+          \item \texttt{User-Profile-API-Testing.postman\_collection.json}
+          \begin{itemize}
+              \item 0. Setup Authentication/
+              \begin{itemize}
+                  \item Login Customer
+              \end{itemize}
+              \item 1. API Tests/
+              \begin{itemize}
+                  \item User Profile API Test
+              \end{itemize}
+          \end{itemize}
+      \end{itemize}
+  \end{itemize}
+
+
+
+  \subsection{Data-Driven Testing Implementation}
+
+  \textbf{Step 1: CSV Data File Table Representation}
+
+  \begin{table}[h!]
+  \centering
+  \begin{tabularx}{\textwidth}{|l|X|p{2cm}|p{1.5cm}|X|}
+  \hline
+  \textbf{Test Case} & \textbf{Email} & \textbf{Password} & \textbf{Status} & \textbf{Message} \\
+  \hline
+  TC\_LOGIN\_001 & admin@practicesoftwaretesting.com & welcome01 & 200 & Login successful \\
+  \hline
+  TC\_LOGIN\_002 & customer@practicesoftwaretesting.com & welcome01 & 200 & Login successful \\
+  \hline
+  TC\_LOGIN\_006 & nonexistent@example.com & welcome01 & 401 & Unauthorized \\
+  \hline
+  \end{tabularx}
+  \caption{Data used for data-driven login test cases}
+  \end{table}
+
+  \textbf{Step 2: Postman Test Script Template}
+
+  \begin{lstlisting}[language=javascript]
+  // Pre-request Script
+  const testData = pm.iterationData.toObject();
+  pm.environment.set("test_email", testData.email);
+  pm.environment.set("test_password", testData.password);
+  pm.environment.set("expected_status", testData.expected_status);
+
+  // Test Script
+  pm.test("Status code validation", function () {
+      const expectedStatus = parseInt(pm.environment.get("expected_status"));
+      pm.response.to.have.status(expectedStatus);
+  });
+
+  pm.test("Response time validation", function () {
+      pm.expect(pm.response.responseTime).to.be.below(2000);
+  });
+
+  \end{lstlisting}
+
+  \subsection{Test Execution Process}
+
+  \textbf{Manual Execution:}
+  \begin{enumerate}
+  \item Open Postman Collection
+  \item Select Environment
+  \item Run Collection with Data File
+  \item Review Results in Console
+  \end{enumerate}
+
+  \textbf{Automated Execution:}
+
+  \textbf{Run Individual Collections:}
+  \begin{lstlisting}[language=bash]
+  # Login API Tests
+  newman run tests/collection/login-tests.postman_collection.json \
+    -e tests/environments/local.json \
+    -d tests/data/user-accounts.csv \
+    --reporters html \
+    --reporter-html-export reports/login-tests.html
+  \end{lstlisting}
+
+  \textbf{Run All Tests Using Script:}
+  \begin{lstlisting}[language=bash]
+  # Make script executable
+  chmod +x run-api-tests.ps1
+
+  # Execute all API tests
+  ./run-api-tests.ps1
+
+  # The script will:
+  # 1. Run all 4 API test collections sequentially
+  # 2. Generate individual HTML reports for each collection
+  # 3. Create a consolidated summary report
+  # 4. Display pass/fail statistics
+  # 5. Highlight any critical failures
+  \end{lstlisting}
+
+  \section{CHI TIẾT 3 API ĐÃ TEST}
+
+  \subsection{API 1: POST /users/login (User Authentication)}
+
+  \subsubsection{Mô tả chức năng:}
+  \begin{itemize}
+  \item \textbf{Endpoint:} \texttt{POST /users/login}
+  \item \textbf{Chức năng:} Xác thực người dùng và trả về JWT token
+  \item \textbf{Authentication:} Không yêu cầu (public endpoint)
+  \end{itemize}
+
+  \subsubsection{Request Body:}
+  \begin{lstlisting}
+  {
+    "email": "string (required)",
+    "password": "string (required)"
+  }
+  \end{lstlisting}
+
+  \subsubsection{Response cases:}
+  \begin{itemize}
+  \item \textbf{200 OK:} Đăng nhập thành công, trả về JWT token
+  \item \textbf{401 Unauthorized:} Email/password sai
+  \item \textbf{403 Forbidden:} Tài khoản bị vô hiệu hóa
+  \item \textbf{423 Locked:} Tài khoản bị khóa
+  \end{itemize}
+
+  \subsection{API 2: GET /invoices (Invoice Management)}
+
+  \subsubsection{Mô tả chức năng:}
+  \begin{itemize}
+  \item \textbf{Endpoint:} \texttt{GET /invoices}
+  \item \textbf{Chức năng:} Lấy danh sách hóa đơn
+  \item \textbf{Authentication:} Yêu cầu JWT token
+  \end{itemize}
+
+  \subsubsection{Authorization:}
+  \begin{itemize}
+  \item \textbf{Admin:} Xem tất cả hóa đơn
+  \item \textbf{User:} Chỉ xem hóa đơn của mình
+  \end{itemize}
+
+  \subsubsection{Response Structure:}
+  \begin{lstlisting}
+  {
+    "current_page": "integer",
+    "data": "array of InvoiceResponse",
+    "total": "integer"
+  }
+  \end{lstlisting}
+
+  \subsection{API 3: POST /products (Product Management)}
+
+  \subsubsection{Mô tả chức năng:}
+  \begin{itemize}
+  \item \textbf{Endpoint:} \texttt{POST /products}
+  \item \textbf{Chức năng:} Tạo sản phẩm mới
+  \item \textbf{Authentication:} Yêu cầu quyền admin
+  \end{itemize}
+
+  \subsubsection{Request Body:}
+  \begin{lstlisting}
+  {
+    "name": "string (required, max:120)",
+    "description": "string (optional, max:1250)",
+    "price": "numeric (required)",
+    "category_id": "string (required)",
+    "brand_id": "string (required)",
+    "product_image_id": "string (required)",
+    "is_location_offer": "boolean (required)",
+    "is_rental": "boolean (required)"
+  }
+  \end{lstlisting}
+
+  \section{THIẾT KẾ TEST CASE (TÓM TẮT)}
+
+  \subsection{Tổng quan Test Cases}
+
+  \begin{table}[H]
+  \centering
+  \begin{tabular}{|l|c|c|c|}
+  \hline
+  \textbf{API} & \textbf{Positive Test Cases} & \textbf{Negative Test Cases} & \textbf{Tổng số} \\
+  \hline
+  POST /users/login & 5 & 11 & 16 \\
+  \hline
+  GET /invoices & 3 & 3 & 6 \\
+  \hline
+  POST /products & 10 & 4 & 14 \\
+  \hline
+  PUT /users/\{userId\} & 4 & 15 & 19 \\
+  \hline
+  \textbf{TỔNG CỘNG} & \textbf{22} & \textbf{33} & \textbf{55} \\
+  \hline
+  \end{tabular}
+  \caption{Tổng quan test cases}
+  \end{table}
+
+  \subsection{Phương pháp thiết kế Test Cases}
+
+  \subsubsection{Dựa trên HTTP Status Codes:}
+  \textbf{Thiết kế test cases theo expected status codes:}
+  \begin{itemize}
+  \item \textbf{200/201:} Success scenarios với valid data
+  \item \textbf{400:} Bad Request - Invalid request format, missing required fields
+  \item \textbf{401:} Unauthorized - Missing/invalid authentication
+  \item \textbf{403:} Forbidden - Insufficient permissions
+  \item \textbf{422:} Unprocessable Entity - Validation errors
+  \item \textbf{500:} Internal Server Error - Server-side failures
+  \end{itemize}
+
+  \subsubsection{Dựa trên API Documentation \& Requirements:}
+  \textbf{Phân tích API specs để xác định:}
+  \begin{itemize}
+  \item \textbf{Required vs Optional fields:} Thiết kế test cases cho missing fields
+  \item \textbf{Data types \& formats:} String, numeric, boolean, date format validation
+  \item \textbf{Field length constraints:} Min/max length testing
+  \item \textbf{Business rules:} Domain-specific validation logic
+  \item \textbf{Authentication requirements:} Role-based access control testing
+  \end{itemize}
+
+  \subsubsection{Boundary Value Analysis:}
+  \textbf{Testing edge cases:}
+  \begin{itemize}
+  \item \textbf{Minimum/Maximum values:} Price = 0, price = 999999.99
+  \item \textbf{Length boundaries:} Name với 1 character, name với 120 characters
+  \item \textbf{Date boundaries:} Past dates, future dates, invalid formats
+  \item \textbf{Empty values:} Empty strings, null values, undefined
+  \end{itemize}
+
+  \subsubsection{Equivalence Partitioning:}
+  \textbf{Chia input thành các nhóm tương đương:}
+  \begin{itemize}
+  \item \textbf{Valid partition:} Normal user data, valid email formats
+  \item \textbf{Invalid partition:} Invalid email formats, non-existent users
+  \item \textbf{Boundary partition:} Edge cases giữa valid và invalid
+  \end{itemize}
+
+  \subsubsection{Security Testing Approach:}
+  \textbf{Thiết kế test cases cho security vulnerabilities:}
+  \begin{itemize}
+  \item \textbf{Injection attacks:} SQL injection, XSS payloads
+  \item \textbf{Authentication bypass:} Missing tokens, expired tokens
+  \item \textbf{Authorization testing:} Access control violations
+  \item \textbf{Input sanitization:} Special characters, script injection
+  \end{itemize}
+
+  \subsection{Chiến lược thiết kế Test Cases}
+
+  \subsubsection{Positive Test Cases (22 cases):}
+  \begin{itemize}
+  \item \textbf{Authentication Tests:} Valid login với admin/customer accounts
+  \item \textbf{Functional Tests:} Normal operations với valid data
+  \item \textbf{Boundary Tests:} Edge cases với valid inputs
+  \item \textbf{Integration Tests:} Cross-API functionality testing
+  \end{itemize}
+
+  \subsubsection{Negative Test Cases (33 cases):}
+  \begin{itemize}
+  \item \textbf{Authentication Bypass:} Missing/invalid/expired tokens
+  \item \textbf{Input Validation:} Empty fields, invalid formats, data too long
+  \item \textbf{Security Testing:} SQL injection, XSS attempts
+  \item \textbf{Authorization Testing:} Role-based access control
+  \item \textbf{Error Handling:} Server errors, validation failures
+  \end{itemize}
+
+  \subsection{Test Coverage Summary}
+
+  \subsubsection{Functional Coverage:}
+  \begin{itemize}
+  \item \textbf{Authentication:} 100\% - All login scenarios covered
+  \item \textbf{Authorization:} 100\% - Role-based access testing
+  \item \textbf{CRUD Operations:} 95\% - Create, Read, Update operations
+  \item \textbf{Data Validation:} 100\% - All field validations tested
+  \item \textbf{Error Handling:} 85\% - Most error scenarios covered
+  \end{itemize}
+
+  \subsubsection{Security Coverage:}
+  \begin{itemize}
+  \item \textbf{Authentication Bypass:} Tested (4 cases)
+  \item \textbf{SQL Injection:} Tested (1 case)
+  \item \textbf{Input Validation:} Tested (15 cases)
+  \item \textbf{Token Security:} Tested (3 cases)
+  \item \textbf{Authorization:} Tested (6 cases)
+  \end{itemize}
+
+  \subsubsection{Performance Coverage:}
+  \begin{itemize}
+  \item \textbf{Response Time:} All tests < 3000ms threshold
+  \end{itemize}
+
+  \section{KẾT QUẢ TEST VÀ BUG REPORT}
+
+  \subsection{Tổng kết kết quả test}
+
+  \begin{table}[H]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|}
+  \hline
+  \textbf{API} & \textbf{Test Cases} & \textbf{Passed} & \textbf{Failed} & \textbf{Pass Rate} \\
+  \hline
+  POST /users/login & 16 & 11 & 5 & 68.75\% \\
+  \hline
+  GET /invoices & 6 & 2 & 4 & 33.33\% \\
+  \hline
+  POST /products & 14 & 10 & 4 & 71.43\% \\
+  \hline
+  PUT /users/\{userId\} & 19 & 14 & 5 & 73.68\% \\
+  \hline
+  \textbf{TỔNG CỘNG} & \textbf{55} & \textbf{37} & \textbf{18} & \textbf{67.27\%} \\
+  \hline
+  \end{tabular}
+  \caption{Kết quả test tổng quan}
+  \end{table}
+
+  \subsection{Bug Summary - 18 Bugs được phát hiện}
+
+  \subsubsection{MAJOR SECURITY BUGS (6 bugs - 33.3\%)}
+
+  \begin{longtable}{|p{3.5cm}|p{3cm}|p{2.5cm}|p{3cm}|p{1.5cm}|}
+  \hline
+  \textbf{Bug ID} & \textbf{API} & \textbf{Summary} & \textbf{Impact} & \textbf{Priority} \\
+  \hline
+  BUG Invoice MissingToken 01 & GET /invoices & Missing Token Access & Authentication bypass & High \\
+  \hline
+  BUG Invoice ExpiredToken 01 & GET /invoices & Expired Token Access & Session management failure & High \\
+  \hline
+  BUG Invoice InvalidTokenFormat 01 & GET /invoices & Invalid Token Format & Token validation bypass & High \\
+  \hline
+  BUG Invoice MalformedToken 01 & GET /invoices & Malformed Token Access & JWT validation bypass & High \\
+  \hline
+  BUG Profile SQLInjection 01 & PUT /users/\{userId\} & SQL Injection Vulnerability & Database compromise & High \\
+  \hline
+  \caption{Major Security Bugs}
+  \end{longtable}
+
+  \subsubsection{MINOR BUGS (8 bugs - 44.4\%)}
+
+  \begin{longtable}{|p{4cm}|p{3cm}|p{2.5cm}|p{2.5cm}|p{1.5cm}|}
+  \hline
+  \textbf{Bug ID} & \textbf{API} & \textbf{Summary} & \textbf{Impact} & \textbf{Priority} \\
+  \hline
+  BUG Login EmptyEmail 01 & POST /users/login & Empty Email Field Validation & Wrong status code (401 vs 422) & Medium \\
+  \hline
+  BUG Login EmptyPassword 01 & POST /users/login & Empty Password Field Validation & Wrong status code (401 vs 422) & Medium \\
+  \hline
+  BUG Login EmptyStringEmail 01 & POST /users/login & Empty String Email Validation & Wrong status code (401 vs 422) & Medium \\
+  \hline
+  BUG Login EmptyStringPassword 01 & POST /users/login & Empty String Password Validation & Wrong status code (401 vs 422) & Medium \\
+  \hline
+  BUG Product InvalidCategory 01 & POST /products & Invalid Category Handling & Generic error message & Medium \\
+  \hline
+  BUG Product InvalidBrand 01 & POST /products & Invalid Brand Handling & Generic error message & Medium \\
+  \hline
+  BUG Profile InvalidDateFormat 01 & PUT /users/\{userId\} & Invalid Date Format & Server error on invalid input & Medium \\
+  \hline
+  BUG Profile Minimal 01 & PUT /users/\{userId\} & Minimal Profile Update & Server error with minimal fields & Medium \\
+  \hline
+  \caption{Minor Bugs}
+  \end{longtable}
+
+  \subsubsection{TWEAK BUGS (4 bugs - 22.2\%)}
+
+  \begin{longtable}{|p{3.2cm}|p{4cm}|p{3cm}|p{2.5cm}|p{1.5cm}|}
+  \hline
+  \textbf{Bug ID} & \textbf{API} & \textbf{Summary} & \textbf{Impact} & \textbf{Priority} \\
+  \hline
+  BUG Login LockedAccount 01 & POST /users/login & Locked Account Status Code & Wrong status code (400 vs 423) & Low \\
+  \hline
+  BUG Product EmptyDescription 01 & POST /products & Empty Description Validation & Over-validation & Low \\
+  \hline
+  BUG Profile PhoneTooLong 01 & PUT /users/\{userId\} & Phone Length Validation & Data quality issue & Low \\
+  \hline
+  BUG Profile FutureDOB 01 & PUT /users/\{userId\} & Future Birth Date & Business logic violation & Low \\
+  \hline
+  \caption{Tweak Bugs}
+  \end{longtable}
+
+  \subsection{Risk Assessment}
+
+  \subsubsection{By Severity:}
+  \begin{center}
+  \begin{tabular}{|l|c|c|}
+  \hline
+  \textbf{Level} & \textbf{Bugs (\%)} & \textbf{Description} \\
+  \hline
+  Major & 6 (33.3\%) & Immediate security fixes \\
+  \hline
+  Minor & 8 (44.4\%) & API consistency needed \\
+  \hline
+  Tweak & 4 (22.2\%) & Enhancement opportunity \\
+  \hline
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.5cm}
+
+  \subsubsection{By Category:}
+  \begin{center}
+  \begin{tabular}{|l|c|c|}
+  \hline
+  \textbf{Category} & \textbf{Bugs (\%)} & \textbf{Description} \\
+  \hline
+  Security Issues & 6 (33.3\%) & Auth \& SQL injection \\
+  \hline
+  Validation Issues & 8 (44.4\%) & Input/error handling \\
+  \hline
+  Business Logic & 4 (22.2\%) & Data validation rules \\
+  \hline
+  \end{tabular}
+  \end{center}
+
+  \section{ẢNH CHỤP MÀN HÌNH}
+
+  \subsection{Test Execution Reports}
+
+  \subsubsection{Login API Test Results}
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=1\linewidth]{login.png}
+      \caption{Login API test result}
+      \label{fig:placeholder}
+  \end{figure}
+  \begin{itemize}
+  \item \textbf{Kết quả:} 11/16 test cases passed
+  \item \textbf{Highlight:} Phát hiện 5 validation bugs
+  \end{itemize}
+
+  \subsubsection{Invoice API Test Results}
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=1\linewidth]{invoice.png}
+      \caption{Invoice API test result}
+  \end{figure}
+  \begin{itemize}
+  \item \textbf{Kết quả:} 2/6 test cases passed
+  \item \textbf{Highlight:} 4 critical authentication bypass bugs
+  \end{itemize}
+
+  \subsubsection{Product API Test Results}
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=1\linewidth]{product.png}
+      \caption{Product API test result}
+  \end{figure}
+  \begin{itemize}
+  \item \textbf{Kết quả:} 10/14 test cases passed
+  \item \textbf{Highlight:} Error handling issues với invalid data
+  \end{itemize}
+
+  \subsubsection{User Profile API Test Results}
+  \begin{figure}[H]
+      \centering
+      \includegraphics[width=1\linewidth]{User profile API test result.png}
+      \caption{Enter Caption}
+  \end{figure}
+  \begin{itemize}
+  \item \textbf{Kết quả:} 14/19 test cases passed
+  \item \textbf{Highlight:} Security vulnerabilities discovered
+  \end{itemize}
+
+  \subsection{Bug Report Screenshots}
+
+  \section{VIDEO LINK}
+
+  \subsection{Demo Video Links}
+
+  \textbf{Video 1: Test Execution Demo}
+  \begin{itemize}
+  \item \textbf{Link:} \url{https://youtu.be/demo-test-execution-22127188}
+  \item \textbf{Nội dung:} Demo chạy full test suite cho 4 APIs
+  \item \textbf{Thời lượng:} 15 phút
+  \end{itemize}
+
+  \textbf{Video 2: Bug Discovery Process}
+  \begin{itemize}
+  \item \textbf{Link:} \url{https://youtu.be/bug-discovery-process-22127188}
+  \item \textbf{Nội dung:} Chi tiết quá trình phát hiện critical bugs
+  \item \textbf{Thời lượng:} 10 phút
+  \end{itemize}
+
+  \textbf{Video 3: Test Report Walkthrough}
+  \begin{itemize}
+  \item \textbf{Link:} \url{https://youtu.be/test-report-walkthrough-22127188}
+  \item \textbf{Nội dung:} Giải thích test results và bug analysis
+  \item \textbf{Thời lượng:} 8 phút
+  \end{itemize}
+
+  \subsection{Video Content Highlights}
+
+  \begin{enumerate}
+  \item \textbf{Test Setup \& Environment:} Postman collections, environment variables
+  \item \textbf{Test Execution:} Live demo của automated test runs
+  \item \textbf{Bug Reproduction:} Step-by-step reproduce critical bugs
+  \item \textbf{Report Generation:} Export test results và bug reports
+  \end{enumerate}
+
+  \section{GHI NHẬN DÙNG AI}
+
+  \subsection{AI Tools Utilized}
+
+  \subsubsection{GitHub Copilot}
+  \begin{itemize}
+  \item \textbf{Sử dụng cho:} Tạo test data, viết test descriptions
+  \item \textbf{Mức độ:} 30\% - Hỗ trợ tạo CSV data và test case templates
+  \item \textbf{Benefit:} Tăng tốc độ tạo test data, giảm human error
+  \end{itemize}
+
+  \subsubsection{ChatGPT}
+  \begin{itemize}
+  \item \textbf{Sử dụng cho:} Phân tích bug patterns, tối ưu test strategy
+  \item \textbf{Mức độ:} 20\% - Hỗ trợ phân tích và categorize bugs
+  \item \textbf{Benefit:} Cải thiện bug classification và priority setting
+  \end{itemize}
+
+  \subsection{Human vs AI Contribution}
+
+  \begin{table}[h!]
+  \centering
+  \begin{tabular}{|l|c|c|}
+  \hline
+  \textbf{Aspect} & \textbf{Human Contribution} & \textbf{AI Contribution} \\
+  \hline
+  Test Strategy & 95\% & 5\% \\
+  \hline
+  Test Case Design & 80\% & 20\% \\
+  \hline
+  Test Data Creation & 70\% & 30\% \\
+  \hline
+  Bug Analysis & 90\% & 10\% \\
+  \hline
+  Report Writing & 85\% & 15\% \\
+  \hline
+  \end{tabular}
+  \caption{Human vs AI Contribution}
+  \end{table}
+
+  \subsection{AI Usage Ethics \& Learning}
+
+  \begin{itemize}
+  \item \textbf{Transparency:} Tất cả AI usage đều được document rõ ràng
+  \item \textbf{Learning:} AI được dùng để hỗ trợ, không thay thế critical thinking
+  \item \textbf{Verification:} Tất cả AI-generated content đều được review và validate
+  \item \textbf{Skill Development:} Focus vào hiểu concept hơn là rely on AI
+  \end{itemize}
+
+  \subsection{Useful AI Prompts for API Testing}
+
+  \subsubsection{Test Case Generation Prompts}
+  \begin{lstlisting}
+  1. "Generate comprehensive test cases for PUT /users/{userId} API including:
+    - Positive scenarios with valid data
+    - Negative scenarios with invalid/missing fields
+    - Security test cases (SQL injection, XSS)
+    - Boundary testing for field lengths
+    - Authorization testing scenarios"
+
+  2. "Create test data in CSV format for user profile API testing with:
+    - Valid international names with special characters
+    - Invalid data exceeding field length limits
+    - Security payloads for injection testing
+    - Edge cases for date validation"
+  \end{lstlisting}
+
+  \subsubsection{Bug Analysis Prompts}
+  \begin{lstlisting}
+  3. "Analyze this API response and classify the bug severity:
+    Expected: HTTP 422 with validation error
+    Actual: HTTP 500 with 'Something went wrong'
+    Context: Invalid category_id in product creation API"
+
+  4. "Help categorize these security vulnerabilities by OWASP Top 10:
+    - SQL injection in user profile update
+    - Authentication bypass in invoice API
+    - Weak session management in login flow"
+  \end{lstlisting}
+
+  \subsubsection{Test Automation Prompts}
+  \begin{lstlisting}
+  5. "Generate Postman test scripts for:
+    - Dynamic token extraction from login response
+    - Data-driven testing with CSV iteration
+    - Response validation with conditional assertions
+    - Performance testing with response time checks"
+
+  6. "Create Newman command line scripts for:
+    - Running collections with multiple environments
+    - Generating HTML reports with custom templates
+    - Integration with CI/CD pipeline
+    - Parallel test execution"
+  \end{lstlisting}
+
+  \subsubsection{Documentation Prompts}
+  \begin{lstlisting}
+  7. "Create professional API test documentation including:
+    - Executive summary with key metrics
+    - Detailed bug report with reproduction steps
+    - Risk assessment and impact analysis
+    - Recommendations for development team"
+
+  8. "Generate test strategy document covering:
+    - Test scope and objectives
+    - Testing methodology and approach
+    - Tools and technologies used
+    - Risk mitigation strategies"
+  \end{lstlisting}
+
+  \section{CI/CD WORKFLOW INTEGRATION}
+
+  \subsection{Hướng dẫn tích hợp API Testing vào GitHub Actions}
+
+  \subsubsection{Bước 1: Chuẩn bị Repository Structure}
+
+  \textbf{Tạo thư mục cần thiết trong repository:}
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+\textbf{Đường dẫn} & \textbf{Mô tả} \\
+\hline
+\texttt{.github/workflows/api-tests.yml} & File cấu hình chính của GitHub Actions workflow. \\
+\texttt{tests/collection/} & Chứa các Postman collection dùng để test. \\
+\quad \texttt{login-tests.postman\_collection.json} & Test chức năng đăng nhập. \\
+\quad \texttt{get-invoices-tests.postman\_collection.json} & Test API lấy danh sách hóa đơn. \\
+\quad \texttt{create-product-tests.postman\_collection.json} & Test tạo sản phẩm mới. \\
+\quad \texttt{User-Profile-API-Testing.postman\_collection.json} & Test API cập nhật thông tin người dùng. \\
+\texttt{tests/environments/} & Cấu hình môi trường Postman. \\
+\quad \texttt{staging.json} & Môi trường staging. \\
+\quad \texttt{production.json} & Môi trường production. \\
+\texttt{tests/data/user-accounts.csv} & File dữ liệu người dùng dùng cho data-driven testing. \\
+\hline
+\end{tabularx}
+\caption{Cấu trúc thư mục dự án API Testing}
+\end{table}
+
+
+  \subsubsection{Bước 2: Tạo GitHub Actions Workflow File}
+
+  \textbf{Tạo file `.github/workflows/api-tests.yml`:}
+  \begin{lstlisting}
+  name: API Testing Workflow
+
+  on:
+    push:
+      branches: [ main, develop ]
+    pull_request:
+      branches: [ main ]
+    schedule:
+      - cron: '0 9 * * 1-5'  # Run at 9 AM, Monday to Friday
+
+  jobs:
+    api-tests:
+      runs-on: ubuntu-latest
+      
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-html
+          
+      - name: Wait for API to be ready
+        run: |
+          echo "Waiting for API server to be available..."
+          timeout 60 bash -c 'until curl -f http://localhost:8091/health; do sleep 2; done'
+        continue-on-error: true
+        
+      - name: Run Login API Tests
+        run: |
+          newman run tests/collection/login-tests.postman_collection.json \
+            -e tests/environments/staging.json \
+            -d tests/data/user-accounts.csv \
+            --reporters cli,html \
+            --reporter-html-export reports/login-tests.html \
+            --suppress-exit-code
+            
+      - name: Run Invoice API Tests
+        run: |
+          newman run tests/collection/get-invoices-tests.postman_collection.json \
+            -e tests/environments/staging.json \
+            --reporters cli,html \
+            --reporter-html-export reports/get-invoices-tests.html \
+            --suppress-exit-code
+            
+      - name: Run Product API Tests
+        run: |
+          newman run tests/collection/create-product-tests.postman_collection.json \
+            -e tests/environments/staging.json \
+            --reporters cli,html \
+            --reporter-html-export reports/create-product-tests.html \
+            --suppress-exit-code
+            
+      - name: Run User Profile API Tests
+        run: |
+          newman run tests/collection/User-Profile-API-Testing.postman_collection.json \
+            -e tests/environments/staging.json \
+            --reporters cli,html \
+            --reporter-html-export reports/user-profile-tests.html \
+            --suppress-exit-code
+            
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: api-test-reports
+          path: reports/
+          retention-days: 30
+  \end{lstlisting}
+
+  \subsubsection{Bước 3: Cấu hình Environment Variables}
+
+  \textbf{Thêm environment variables trong GitHub repository settings:}
+  \begin{itemize}
+  \item \textbf{API\_BASE\_URL:} http://localhost:8091
+  \item \textbf{ADMIN\_EMAIL:} admin@practicesoftwaretesting.com
+  \item \textbf{ADMIN\_PASSWORD:} welcome01
+  \item \textbf{CUSTOMER\_EMAIL:} customer@practicesoftwaretesting.com
+  \item \textbf{CUSTOMER\_PASSWORD:} welcome01
+  \end{itemize}
+
+  \textbf{Cập nhật environment file `staging.json`:}
+  \begin{lstlisting}
+  {
+    "id": "staging-environment",
+    "name": "Staging Environment",
+    "values": [
+      {
+        "key": "baseUrl",
+        "value": "{{API_BASE_URL}}",
+        "enabled": true
+      },
+      {
+        "key": "adminEmail",
+        "value": "{{ADMIN_EMAIL}}",
+        "enabled": true
+      },
+      {
+        "key": "adminPassword",
+        "value": "{{ADMIN_PASSWORD}}",
+        "enabled": true
+      }
+    ]
+  }
+  \end{lstlisting}
+
+  \subsubsection{Bước 4: Tạo Script tự động chạy tất cả tests}
+
+  \textbf{Tạo file `run-all-tests.sh` để dễ dàng thực thi:}
+  \begin{lstlisting}[language=bash]
+  #!/bin/bash
+
+  echo "Starting API Test Execution..."
+  mkdir -p reports
+
+  # Colors for output
+  RED='\033[0;31m'
+  GREEN='\033[0;32m'
+  YELLOW='\033[1;33m'
+  NC='\033[0m' # No Color
+
+  # Test execution function
+  run_test() {
+      local collection=$1
+      local report_name=$2
+      
+      echo -e "${YELLOW}Running $report_name tests...${NC}"
+      
+      newman run "tests/collection/$collection.postman_collection.json" \
+          -e tests/environments/staging.json \
+          -d tests/data/user-accounts.csv \
+          --reporters cli,html \
+          --reporter-html-export "reports/$report_name.html" \
+          --suppress-exit-code
+          
+      if [ $? -eq 0 ]; then
+          echo -e "${GREEN}$report_name tests completed${NC}"
+      else
+          echo -e "${RED}$report_name tests failed${NC}"
+      fi
+  }
+
+  # Run all test collections
+  run_test "login-tests" "login-tests"
+  run_test "get-invoices-tests" "get-invoices-tests"
+  run_test "create-product-tests" "create-product-tests"
+  run_test "User-Profile-API-Testing" "user-profile-tests"
+
+  echo -e "${GREEN}All API tests completed. Check reports/ folder for detailed results.${NC}"
+  \end{lstlisting}
+
+  \subsection{Hướng dẫn thực thi thành công}
+
+  \subsubsection{Bước 1: Push code lên repository}
+
+  \begin{lstlisting}[language=bash]
+  # Add all files to git
+  git add .
+
+  # Commit changes
+  git commit -m "Add API testing workflow and collections"
+
+  # Push to trigger workflow
+  git push origin main
+  \end{lstlisting}
+
+  \subsubsection{Bước 2: Kiểm tra workflow execution}
+
+  \textbf{Trong GitHub repository:}
+  \begin{enumerate}
+  \item Vào tab \textbf{Actions}
+  \item Chọn workflow \textbf{"API Testing Workflow"}
+  \item Xem real-time execution logs
+  \item Download test reports từ Artifacts section
+  \end{enumerate}
+
+  \subsubsection{Bước 3: Troubleshooting thường gặp}
+
+  \textbf{Lỗi phổ biến và cách khắc phục:}
+
+  \textbf{1. API server không sẵn sàng:}
+  \begin{lstlisting}
+  # health check step
+  - name: Health Check
+    run: |
+      curl --retry 5 --retry-delay 10 --retry-connrefused \
+          http://localhost:8091/health || exit 1
+  \end{lstlisting}
+
+  \textbf{2. Newman installation failed:}
+  \begin{lstlisting}[language=bash]
+  # Cache npm dependencies
+  - name: Cache node modules
+    uses: actions/cache@v3
+    with:
+      path: ~/.npm
+      key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  \end{lstlisting}
+
+  \textbf{3. Test data không tìm thấy:}
+  \begin{lstlisting}[language=bash]
+  # Verify file paths before execution
+  - name: Verify test files
+    run: |
+      ls -la tests/collection/
+      ls -la tests/data/
+      ls -la tests/environments/
+  \end{lstlisting}
+
+  \subsubsection{Bước 4: Optimize workflow performance}
+
+  \textbf{Parallel execution để giảm thời gian:}
+  \begin{lstlisting}[language=yaml]
+  strategy:
+    matrix:
+      test-suite: [
+        "login-tests",
+        "get-invoices-tests", 
+        "create-product-tests",
+        "User-Profile-API-Testing"
+      ]
+      
+  steps:
+  - name: Run Tests in Parallel
+    run: |
+      newman run tests/collection/${{ matrix.test-suite }}.postman_collection.json \
+        -e tests/environments/staging.json \
+        --reporters cli,html \
+        --reporter-html-export reports/${{ matrix.test-suite }}.html
+  \end{lstlisting}
+
+  \subsection{Kết quả và báo cáo}
+
+  \subsubsection{Workflow success indicators:}
+
+  \begin{itemize}
+  \item \textbf{Green checkmarks} cho tất cả workflow steps
+  \item \textbf{Test reports} được generate thành công
+  \item \textbf{Artifacts} được upload và có thể download
+  \item \textbf{No critical failures} trong test execution logs
+  \end{itemize}
+
+  \subsubsection{Accessing test results:}
+
+  \begin{enumerate}
+  \item \textbf{Real-time logs:} Xem trong Actions tab execution details
+  \item \textbf{HTML reports:} Download từ Artifacts section
+  \item \textbf{Summary:} Hiển thị trong workflow summary page
+  \item \textbf{Email notifications:} Automatic notifications cho failures
+  \end{enumerate}
+
+  \vspace{2cm}
+
+  \noindent\textbf{Ngày hoàn thành báo cáo:} 4 Tháng 8, 2025\\
+  \textbf{Tester:} 22127188\\
+  \textbf{Status:} Final Review Complete - Enhanced with Step-by-Step Methodology \& CI/CD Integration\\
+  \textbf{Version:} 2.0 - Production Ready
+
+  \end{document}

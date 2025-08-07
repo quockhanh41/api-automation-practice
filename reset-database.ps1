@@ -37,7 +37,7 @@ $retryCount = 0
 do {
     $retryCount++
     Write-Host "[RETRY $retryCount/$maxRetries] Kiểm tra MariaDB..." -ForegroundColor Gray
-    $dbCheck = docker compose exec mariadb mysqladmin ping -h localhost -u root -proot 2>&1
+    docker compose exec mariadb mysqladmin ping -h localhost -u root -proot 2>&1 | Out-Null
     if ($LASTEXITCODE -eq 0) {
         Write-Host "[SUCCESS] MariaDB đã sẵn sàng!" -ForegroundColor Green
         break
@@ -93,4 +93,9 @@ Write-Host "   - Host: localhost:3306" -ForegroundColor White
 Write-Host "   - Database: toolshop" -ForegroundColor White
 Write-Host "   - Username: root" -ForegroundColor White
 Write-Host "   - Password: root" -ForegroundColor White
+Write-Host ""
+Write-Host "👥 Users được tạo:" -ForegroundColor Cyan
+Write-Host "   - Default users: admin@practicesoftwaretesting.com, customer@practicesoftwaretesting.com" -ForegroundColor White
+Write-Host "   - Additional users: jane@example.com, john@example.com, alice@example.com, etc. (ID 4-20)" -ForegroundColor White
+Write-Host "   - Password cho tất cả users: welcome01" -ForegroundColor White
 Write-Host ""
